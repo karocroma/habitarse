@@ -9,7 +9,7 @@
     <!-- Google Fonts: Montserrat & Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,600;0,700;0,800;0,900;1,500&family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -35,7 +35,7 @@
         }
     </script>
     <style>
-        /* Custom Styles & Color Enforcement */
+        /* Strict Color Rules: NO BLACK ALLOWED (#572c0e and #964915 replace all dark tones) */
         body {
             background-color: #ffede0;
             color: #572c0e;
@@ -43,61 +43,81 @@
             overflow-x: hidden;
         }
 
-        /* Smooth Selection Color */
         ::selection {
             background-color: #ff66c4;
             color: #ffede0;
         }
 
-        /* Glassmorphic elements with warm border */
         .glass-warm {
-            background: rgba(255, 237, 224, 0.85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            background: rgba(255, 237, 224, 0.92);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
             border: 1px solid rgba(150, 73, 21, 0.15);
         }
 
         .card-shadow {
-            box-shadow: 0 10px 30px -5px rgba(87, 44, 14, 0.08);
+            box-shadow: 0 12px 32px -5px rgba(87, 44, 14, 0.08);
         }
 
         .card-shadow-hover {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         .card-shadow-hover:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 20px 35px -5px rgba(150, 73, 21, 0.15);
+            transform: translateY(-8px);
+            box-shadow: 0 24px 40px -6px rgba(150, 73, 21, 0.18);
         }
 
-        /* Active Scroll Indicator Line */
-        .story-line {
-            background: linear-gradient(180deg, #ff66c4 0%, #ff5757 50%, #964915 100%);
+        /* Pulse FX for 2050 Simulator */
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 102, 196, 0.3); }
+            50% { box-shadow: 0 0 35px rgba(255, 87, 87, 0.55); }
         }
 
-        /* Hide scrollbars for slick look */
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
+        .futuristic-glow {
+            animation: pulse-glow 3s infinite ease-in-out;
         }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
+
+        /* Waveform Animation for Audio Player */
+        @keyframes wave-animation {
+            0%, 100% { height: 8px; }
+            50% { height: 28px; }
+        }
+
+        .wave-bar {
+            animation: wave-animation 1.2s infinite ease-in-out;
+        }
+
+        /* Prezi Canvas Styles */
+        .prezi-viewport {
+            perspective: 1000px;
+            overflow: hidden;
+        }
+        .prezi-canvas {
+            transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+            transform-origin: center center;
+        }
+        .prezi-node {
+            transition: all 0.4s ease;
+        }
+        .prezi-node.active-node {
+            border-color: #ff5757;
+            box-shadow: 0 0 25px rgba(255, 87, 87, 0.4);
+            transform: scale(1.05);
         }
     </style>
 </head>
 <body class="min-h-screen flex flex-col selection:bg-brand-pink selection:text-brand-cream">
 
     <!-- HEADER / NAVIGATION -->
-    <header class="sticky top-0 z-50 glass-warm transition-all duration-300 border-b border-brand-terracotta/10">
+    <header class="sticky top-0 z-50 glass-warm transition-all duration-300 border-b border-brand-terracotta/15">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             <!-- LOGO -->
-            <a href="#" class="flex items-center group focus:outline-none">
+            <a href="#" class="flex items-center group focus:outline-none" onclick="playAudioFX('click')">
                 <div class="flex flex-col">
                     <div class="flex items-center gap-1">
-                        <!-- Recreated Logo typography matching the banner -->
                         <span class="font-display font-extrabold text-2xl sm:text-3xl tracking-tight text-[#ff66c4]">habitar</span>
                         <div class="relative inline-flex items-center justify-center">
-                            <!-- Venus / Female symbol icon representing (se) -->
                             <svg class="w-8 h-10 sm:w-10 sm:h-12 text-[#ff5757] drop-shadow-sm transition-transform group-hover:scale-105" viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <circle cx="50" cy="40" r="32" stroke="currentColor" stroke-width="12" fill="none"/>
                                 <path d="M50 72 V105" stroke="currentColor" stroke-width="12" stroke-linecap="round"/>
@@ -106,36 +126,53 @@
                             </svg>
                         </div>
                     </div>
-                    <span class="text-[9px] sm:text-[11px] font-medium text-brand-terracotta tracking-wider uppercase -mt-1 font-sans">
+                    <span class="text-[9px] sm:text-[11px] font-semibold text-brand-terracotta tracking-wider uppercase -mt-1 font-sans">
                         Narrativas y Guía de Salud Femenina Integral
                     </span>
                 </div>
             </a>
 
             <!-- DESKTOP MENU -->
-            <nav class="hidden md:flex items-center gap-8 font-medium text-sm text-brand-chocolate">
-                <a href="#quienes-somos" class="hover:text-brand-pink transition-colors py-1 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-brand-pink hover:after:w-full after:transition-all">Quiénes Somos</a>
-                <a href="#objetivo" class="hover:text-brand-pink transition-colors py-1 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-brand-pink hover:after:w-full after:transition-all">Objetivo</a>
-                <a href="#scrollytelling" class="hover:text-brand-pink transition-colors py-1 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-brand-pink hover:after:w-full after:transition-all">El Problema</a>
-                <a href="#proximos" class="hover:text-brand-pink transition-colors py-1 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-brand-pink hover:after:w-full after:transition-all">Próximos Contenidos</a>
-                <a href="#redes" class="px-5 py-2.5 rounded-full bg-brand-coral text-brand-cream font-semibold hover:bg-brand-pink transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+            <nav class="hidden md:flex items-center gap-5 font-medium text-xs lg:text-sm text-brand-chocolate">
+                <a href="#quienes-somos" onclick="playAudioFX('click')" class="hover:text-brand-pink transition-colors py-1">Quiénes Somos</a>
+                <a href="#enfoque" onclick="playAudioFX('click')" class="hover:text-brand-pink transition-colors py-1">Investigación</a>
+                <a href="#lab2050" onclick="playAudioFX('sweep')" class="px-3 py-1.5 rounded-full bg-brand-pink/15 text-brand-pink border border-brand-pink/30 font-bold hover:bg-brand-pink hover:text-white transition-all shadow-sm">
+                    ✨ Lab 2050
+                </a>
+                <a href="#ecosistema" onclick="playAudioFX('click')" class="hover:text-brand-pink transition-colors py-1">Videos</a>
+                <a href="#podcast" onclick="playAudioFX('click')" class="hover:text-brand-pink transition-colors py-1">Podcast</a>
+                <a href="#guia-edades" onclick="playAudioFX('click')" class="hover:text-brand-pink transition-colors py-1">Guía por Edades</a>
+                
+                <!-- AUDIO SOUND FX TOGGLE BUTTON -->
+                <button id="sound-toggle-btn" onclick="toggleSoundSystem()" class="p-2 rounded-full bg-white border border-brand-terracotta/20 text-brand-chocolate hover:text-brand-pink transition-all shadow-sm" title="Efectos de Sonido Sintetizados">
+                    <i id="sound-icon" class="fa-solid fa-volume-high text-brand-coral"></i>
+                </button>
+
+                <a href="#redes" onclick="playAudioFX('click')" class="px-4 py-2 rounded-full bg-brand-coral text-brand-cream font-semibold hover:bg-brand-pink transition-all shadow-md">
                     Comunidad
                 </a>
             </nav>
 
             <!-- MOBILE MENU BUTTON -->
-            <button id="mobile-menu-btn" class="md:hidden p-2 rounded-xl text-brand-chocolate hover:bg-brand-terracotta/10 focus:outline-none">
-                <i class="fa-solid fa-bars text-2xl"></i>
-            </button>
+            <div class="flex items-center gap-2 md:hidden">
+                <button onclick="toggleSoundSystem()" class="p-2 rounded-xl text-brand-chocolate bg-white/80">
+                    <i id="mobile-sound-icon" class="fa-solid fa-volume-high text-brand-coral"></i>
+                </button>
+                <button id="mobile-menu-btn" class="p-2 rounded-xl text-brand-chocolate hover:bg-brand-terracotta/10 focus:outline-none">
+                    <i class="fa-solid fa-bars text-2xl"></i>
+                </button>
+            </div>
         </div>
 
         <!-- MOBILE MENU DROPDOWN -->
         <div id="mobile-menu" class="hidden md:hidden glass-warm border-b border-brand-terracotta/20 px-6 py-6 space-y-4">
-            <a href="#quienes-somos" class="block font-medium text-brand-chocolate hover:text-brand-pink transition-colors">Quiénes Somos</a>
-            <a href="#objetivo" class="block font-medium text-brand-chocolate hover:text-brand-pink transition-colors">Objetivo</a>
-            <a href="#scrollytelling" class="block font-medium text-brand-chocolate hover:text-brand-pink transition-colors">El Problema</a>
-            <a href="#proximos" class="block font-medium text-brand-chocolate hover:text-brand-pink transition-colors">Próximos Contenidos</a>
-            <a href="#redes" class="inline-block w-full text-center px-5 py-3 rounded-xl bg-brand-coral text-brand-cream font-semibold hover:bg-brand-pink transition-all">
+            <a href="#quienes-somos" onclick="playAudioFX('click')" class="block font-medium text-brand-chocolate">Quiénes Somos</a>
+            <a href="#enfoque" onclick="playAudioFX('click')" class="block font-medium text-brand-chocolate">Investigación Periodística</a>
+            <a href="#lab2050" onclick="playAudioFX('sweep')" class="block font-bold text-brand-pink">✨ Lab 2050 (Propuesta Innovadora)</a>
+            <a href="#ecosistema" onclick="playAudioFX('click')" class="block font-medium text-brand-chocolate">Reportajes & Videos</a>
+            <a href="#podcast" onclick="playAudioFX('click')" class="block font-medium text-brand-chocolate">Podcast «Cuerpo y Frecuencia»</a>
+            <a href="#guia-edades" onclick="playAudioFX('click')" class="block font-medium text-brand-chocolate">Guía por Rangos Etarios</a>
+            <a href="#redes" onclick="playAudioFX('click')" class="inline-block w-full text-center px-5 py-3 rounded-xl bg-brand-coral text-brand-cream font-semibold">
                 Conéctate en Redes
             </a>
         </div>
@@ -143,227 +180,86 @@
 
     <main class="flex-grow">
         <!-- HERO SECTION -->
-        <section class="relative pt-12 pb-20 md:pt-20 md:pb-32 overflow-hidden">
-            <!-- Decorative background elements -->
-            <div class="absolute top-10 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-brand-pink/15 rounded-full blur-3xl -z-10"></div>
-            <div class="absolute bottom-0 right-10 w-[400px] h-[400px] bg-brand-coral/10 rounded-full blur-3xl -z-10"></div>
-
-            <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                <!-- Badge -->
-                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/60 border border-brand-terracotta/20 text-brand-terracotta font-medium text-xs sm:text-sm mb-8 shadow-sm backdrop-blur-md">
-                    <span class="w-2 h-2 rounded-full bg-brand-coral animate-ping"></span>
-                    <span>Proyecto Periodístico Transmedia Independiente</span>
+        <section class="relative pt-12 pb-20 md:pt-20 md:pb-28 overflow-hidden">
+            <div class="absolute top-10 left-1/2 -translate-x-1/2 w-[700px] h-[700px] bg-brand-pink/15 rounded-full blur-3xl -z-10"></div>
+            
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/70 border border-brand-terracotta/20 text-brand-terracotta font-semibold text-xs sm:text-sm mb-8 shadow-sm backdrop-blur-md">
+                    <span class="w-2.5 h-2.5 rounded-full bg-brand-coral animate-ping"></span>
+                    <span>Plataforma Periodística Transmedia • Perú 2026</span>
                 </div>
 
-                <!-- Main Headline -->
                 <h1 class="font-display font-extrabold text-4xl sm:text-6xl md:text-7xl tracking-tight text-brand-chocolate mb-6 leading-[1.1]">
-                    Investigación y divulgación para <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-pink via-brand-coral to-brand-terracotta">habitar nuestro cuerpo</span> con autonomía.
+                    Investigación periodística, evidencia médica y <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-pink via-brand-coral to-brand-terracotta">autonomía corporal</span>.
                 </h1>
 
-                <!-- Subtitle -->
-                <p class="text-lg sm:text-xl text-brand-chocolate/80 max-w-3xl mx-auto mb-10 leading-relaxed font-normal">
-                    Rompemos el silencio frente a la desinformación médica, el sesgo de género en la atención hospitalaria y los tabúes corporales en el Perú.
+                <p class="text-lg sm:text-xl text-brand-chocolate/85 max-w-3xl mx-auto mb-10 leading-relaxed font-normal">
+                    Divulgación científica rigurosa y empática sin mitos ni dolor menstrual normalizado. Cuestionamos el retraso diagnóstico y la violencia médica en la atención hospitalaria.
                 </p>
 
-                <!-- CTA Group -->
-                <div class="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
-                    <a href="#scrollytelling" class="w-full sm:w-auto px-8 py-4 rounded-full bg-brand-pink text-white font-bold text-base hover:bg-brand-coral transition-all shadow-lg shadow-brand-pink/25 hover:shadow-xl hover:shadow-brand-coral/30 transform hover:-translate-y-1 text-center">
-                        Explorar la Investigación <i class="fa-solid fa-arrow-down ml-2 text-sm"></i>
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 mb-16">
+                    <a href="#lab2050" onclick="playAudioFX('sweep')" class="w-full sm:w-auto px-8 py-4 rounded-full bg-brand-pink text-white font-bold text-base hover:bg-brand-coral transition-all shadow-lg shadow-brand-pink/30 transform hover:-translate-y-1 text-center">
+                        Explorar Lab 2050 <i class="fa-solid fa-sparkles ml-2"></i>
                     </a>
-                    <a href="#quienes-somos" class="w-full sm:w-auto px-8 py-4 rounded-full bg-white/70 border border-brand-terracotta/20 text-brand-chocolate font-bold text-base hover:bg-white transition-all shadow-sm hover:shadow text-center">
-                        Conoce el Proyecto
+                    <a href="#podcast" onclick="playAudioFX('click')" class="w-full sm:w-auto px-8 py-4 rounded-full bg-brand-coral text-white font-bold text-base hover:bg-brand-pink transition-all shadow-md text-center">
+                        <i class="fa-solid fa-headphones mr-2"></i> Escuchar Podcast
+                    </a>
+                    <a href="#ecosistema" onclick="playAudioFX('click')" class="w-full sm:w-auto px-8 py-4 rounded-full bg-white border border-brand-terracotta/20 text-brand-chocolate font-bold text-base hover:bg-white/80 transition-all text-center">
+                        Ver Investigaciones
                     </a>
                 </div>
 
-                <!-- Quick Stats Pill -->
-                <div class="mt-16 grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 max-w-3xl mx-auto">
-                    <div class="p-4 rounded-2xl bg-white/50 border border-brand-terracotta/10 text-center">
-                        <span class="block font-display font-extrabold text-2xl sm:text-3xl text-brand-coral">7 a 10 años</span>
-                        <span class="text-xs sm:text-sm text-brand-chocolate/70 font-medium">Demora promedio en diagnóstico</span>
-                    </div>
-                    <div class="p-4 rounded-2xl bg-white/50 border border-brand-terracotta/10 text-center">
-                        <span class="block font-display font-extrabold text-2xl sm:text-3xl text-brand-pink">1 de cada 10</span>
-                        <span class="text-xs sm:text-sm text-brand-chocolate/70 font-medium">Mujeres sufre Endometriosis</span>
-                    </div>
-                    <div class="p-4 rounded-2xl bg-white/50 border border-brand-terracotta/10 text-center col-span-2 md:col-span-1">
-                        <span class="block font-display font-extrabold text-2xl sm:text-3xl text-brand-terracotta">Síndrome Yentl</span>
-                        <span class="text-xs sm:text-sm text-brand-chocolate/70 font-medium">Sesgo de género en medicina</span>
+                <!-- HERO IMAGE BANNER WITH CAPTION -->
+                <div class="relative max-w-5xl mx-auto rounded-3xl overflow-hidden border-2 border-brand-terracotta/15 shadow-2xl bg-white p-3">
+                    <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1400&q=80" alt="Investigación médica y consulta ginecológica" class="w-full h-[320px] sm:h-[450px] object-cover rounded-2xl">
+                    <div class="p-4 sm:p-5 bg-brand-cream/90 rounded-b-2xl border-t border-brand-terracotta/10 text-left">
+                        <p class="text-xs sm:text-sm text-brand-chocolate font-medium italic">
+                            <i class="fa-solid fa-camera text-brand-coral mr-2"></i><strong>Figura 1.1:</strong> La necesidad de trasladar la investigación clínica a la vida cotidiana de las mujeres. El Síndrome de Yentl ocasiona que los síntomas femeninos sean descartados de forma sistemática en los centros de salud primaria.
+                        </p>
                     </div>
                 </div>
+
             </div>
         </section>
 
-        <!-- SCROLLYTELLING INTERACTIVE SECTION -->
-        <section id="scrollytelling" class="py-20 bg-white/40 border-y border-brand-terracotta/10 relative">
-            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center max-w-3xl mx-auto mb-16">
-                    <span class="text-brand-coral font-bold text-xs uppercase tracking-widest block mb-2">Narrativa Interactiva</span>
-                    <h2 class="font-display font-bold text-3xl sm:text-4xl text-brand-chocolate">
-                        El Camino del Diagnóstico en la Salud Femenina
-                    </h2>
-                    <p class="text-brand-chocolate/80 mt-3">
-                        Desliza hacia abajo para recorrer la realidad que enfrentan miles de mujeres en el sistema de salud.
-                    </p>
-                </div>
-
-                <!-- Scrollytelling Container -->
-                <div class="relative grid md:grid-cols-12 gap-8 items-start">
-                    
-                    <!-- Sticky Visual Dashboard (Desktop) -->
-                    <div class="hidden md:block md:col-span-5 sticky top-32">
-                        <div id="sticky-card" class="p-8 rounded-3xl bg-white border-2 border-brand-pink/20 shadow-xl transition-all duration-500 min-h-[380px] flex flex-col justify-between">
-                            <div>
-                                <span id="sticky-step-num" class="px-3 py-1 rounded-full bg-brand-pink/20 text-brand-pink font-bold text-xs inline-block mb-4">
-                                    Paso 1 de 4
-                                </span>
-                                <div id="sticky-icon" class="w-16 h-16 rounded-2xl bg-brand-cream text-brand-pink flex items-center justify-center text-3xl mb-6 shadow-inner">
-                                    <i class="fa-solid fa-face-frown-open"></i>
-                                </div>
-                                <h3 id="sticky-title" class="font-display font-bold text-2xl text-brand-chocolate mb-3">
-                                    La Normalización del Dolor
-                                </h3>
-                                <p id="sticky-desc" class="text-brand-chocolate/80 text-sm leading-relaxed">
-                                    "Es solo cólico", "Todas pasan por eso", "Es estrés". La frase recurrente que silencia los primeros síntomas antes de llegar a consulta.
-                                </p>
-                            </div>
-                            <div class="pt-6 border-t border-brand-cream flex items-center justify-between text-xs text-brand-terracotta font-semibold">
-                                <span>Habitar(se) Investigación</span>
-                                <span id="sticky-progress">25% Completado</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Scrollable Story Cards -->
-                    <div class="md:col-span-7 space-y-12 relative pl-6 md:pl-0">
-                        <!-- Connecting Line for Mobile -->
-                        <div class="absolute left-2 top-4 bottom-4 w-1 story-line rounded-full md:hidden"></div>
-
-                        <!-- Step 1 -->
-                        <div class="story-step p-6 sm:p-8 rounded-3xl bg-white border border-brand-terracotta/10 card-shadow card-shadow-hover transition-all" data-step="1" data-title="La Normalización del Dolor" data-desc="El dolor pélvico invalidante no es normal. La normalización sociocultural obliga a las pacientes a aguantar síntomas severos pensando que es parte natural de ser mujer." data-icon="fa-face-frown-open" data-progress="25%">
-                            <div class="flex items-center gap-3 mb-4">
-                                <span class="w-8 h-8 rounded-full bg-brand-pink text-white flex items-center justify-center font-bold text-sm">1</span>
-                                <span class="text-xs font-bold text-brand-pink uppercase tracking-wider">El Inicio del Problema</span>
-                            </div>
-                            <h3 class="font-display font-bold text-xl sm:text-2xl text-brand-chocolate mb-3">
-                                «A todas les duele la regla»
-                            </h3>
-                            <p class="text-brand-chocolate/80 text-sm sm:text-base leading-relaxed mb-4">
-                                Desde la adolescencia, el malestar es minimizado en el entorno familiar y social. Esta premisa frena las búsquedas tempranas de atención médica especializada.
-                            </p>
-                            <div class="p-4 rounded-xl bg-brand-cream border border-brand-terracotta/10 text-xs sm:text-sm text-brand-chocolate italic">
-                                💡 "El primer obstáculo no está en el laboratorio, sino en creer que sufrir es lo normal."
-                            </div>
-                        </div>
-
-                        <!-- Step 2 -->
-                        <div class="story-step p-6 sm:p-8 rounded-3xl bg-white border border-brand-terracotta/10 card-shadow card-shadow-hover transition-all opacity-80" data-step="2" data-title="El Retraso Diagnóstico" data-desc="Una paciente visita en promedio entre 5 y 7 especialistas antes de obtener una respuesta acertada, acumulando años de dolor sin tratamiento." data-icon="fa-hourglass-half" data-progress="50%">
-                            <div class="flex items-center gap-3 mb-4">
-                                <span class="w-8 h-8 rounded-full bg-brand-coral text-white flex items-center justify-center font-bold text-sm">2</span>
-                                <span class="text-xs font-bold text-brand-coral uppercase tracking-wider">7 a 10 Años de Espera</span>
-                            </div>
-                            <h3 class="font-display font-bold text-xl sm:text-2xl text-brand-chocolate mb-3">
-                                Ecografías básicas e invisibilidad
-                            </h3>
-                            <p class="text-brand-chocolate/80 text-sm sm:text-base leading-relaxed mb-4">
-                                Una ecografía ginecológica estándar no suele detectar la endometriosis profunda. Al salir los estudios "limpios", la paciente es derivada a casa sin respuestas de fondo.
-                            </p>
-                            <div class="p-4 rounded-xl bg-brand-cream border border-brand-terracotta/10 text-xs sm:text-sm text-brand-chocolate italic">
-                                📌 En el Perú, las pruebas con mapeo especializado no siempre están disponibles en la atención primaria pública.
-                            </div>
-                        </div>
-
-                        <!-- Step 3 -->
-                        <div class="story-step p-6 sm:p-8 rounded-3xl bg-white border border-brand-terracotta/10 card-shadow card-shadow-hover transition-all opacity-80" data-step="3" data-title="El Sesgo de Género" data-desc="El Síndrome de Yentl describe cómo los síntomas femeninos son catalogados erróneamente como emocionales o psicogénicos antes de investigar causas orgánicas." data-icon="fa-user-doctor" data-progress="75%">
-                            <div class="flex items-center gap-3 mb-4">
-                                <span class="w-8 h-8 rounded-full bg-brand-terracotta text-white flex items-center justify-center font-bold text-sm">3</span>
-                                <span class="text-xs font-bold text-brand-terracotta uppercase tracking-wider">El Síndrome de Yentl</span>
-                            </div>
-                            <h3 class="font-display font-bold text-xl sm:text-2xl text-brand-chocolate mb-3">
-                                Psychologización de los síntomas
-                            </h3>
-                            <p class="text-brand-chocolate/80 text-sm sm:text-base leading-relaxed mb-4">
-                                Respuestas como "estás muy estresada" o "son exageraciones" retrasan los tratamientos integrales e impactan gravemente la salud mental de la paciente.
-                            </p>
-                            <div class="p-4 rounded-xl bg-brand-cream border border-brand-terracotta/10 text-xs sm:text-sm text-brand-chocolate italic">
-                                ⚖️ Investigamos los vacíos en la atención médica para transformar el trato clínico en una experiencia con enfoque de derechos.
-                            </div>
-                        </div>
-
-                        <!-- Step 4 -->
-                        <div class="story-step p-6 sm:p-8 rounded-3xl bg-white border border-brand-terracotta/10 card-shadow card-shadow-hover transition-all opacity-80" data-step="4" data-title="Autonomía y Consulta Digna" data-desc="Proporcionar herramientas de información científica para que las mujeres puedan llevar un registro sintomático y exigir pruebas diagnósticas certeras." data-icon="fa-notes-medical" data-progress="100%">
-                            <div class="flex items-center gap-3 mb-4">
-                                <span class="w-8 h-8 rounded-full bg-brand-pink text-white flex items-center justify-center font-bold text-sm">4</span>
-                                <span class="text-xs font-bold text-brand-pink uppercase tracking-wider">El Cambio con Habitar(se)</span>
-                            </div>
-                            <h3 class="font-display font-bold text-xl sm:text-2xl text-brand-chocolate mb-3">
-                                Herramientas para la consulta consciente
-                            </h3>
-                            <p class="text-brand-chocolate/80 text-sm sm:text-base leading-relaxed mb-4">
-                                Traducimos la evidencia científica en guías prácticas, bitácoras de síntomas y relatos transmedia para empoderar la toma de decisiones sobre nuestro cuerpo.
-                            </p>
-                            <div class="p-4 rounded-xl bg-brand-cream border border-brand-terracotta/10 text-xs sm:text-sm text-brand-chocolate font-semibold">
-                                ✨ El conocimiento clínico al servicio de la autonomía del paciente.
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- QUIÉNES SOMOS SECTION -->
-        <section id="quienes-somos" class="py-20 md:py-28 relative">
+        <!-- QUIÉNES SOMOS & OBJETIVO SECTION -->
+        <section id="quienes-somos" class="py-20 md:py-28 bg-white/50 border-y border-brand-terracotta/15">
             <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="grid md:grid-cols-12 gap-12 items-center">
                     
-                    <!-- Left Column Text -->
+                    <!-- Text Content -->
                     <div class="md:col-span-7 space-y-6">
-                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-pink/15 text-brand-pink font-semibold text-xs uppercase tracking-wider">
-                            Sobre Nosotras
+                        <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-brand-pink/15 text-brand-pink font-bold text-xs uppercase tracking-wider">
+                            Quiénes Somos
                         </div>
                         <h2 class="font-display font-extrabold text-3xl sm:text-4xl text-brand-chocolate leading-tight">
-                            ¿Quiénes Somos?
+                            Periodismo Transmedia que rompe el sesgo de género
                         </h2>
-                        <!-- Exact text provided by user -->
-                        <p class="text-brand-chocolate text-base sm:text-lg leading-relaxed font-normal bg-white/60 p-6 rounded-3xl border border-brand-terracotta/10 shadow-sm">
-                            Somos un proyecto periodístico transmedia independiente enfocado en visibilizar, investigar y divulgar la salud femenina desde una mirada integral, científica y con enfoque de derechos. Rompemos el silencio frente a la desinformación médica, el sesgo de género en la atención hospitalaria y los tabúes corporales, construyendo un espacio seguro donde el conocimiento se traduce en herramientas de autonomía y escucha activa.
-                        </p>
+                        
+                        <!-- Text exact match from prompt -->
+                        <div class="bg-brand-cream/80 p-6 sm:p-8 rounded-3xl border border-brand-terracotta/15 space-y-4 shadow-sm">
+                            <p class="text-brand-chocolate text-base sm:text-lg leading-relaxed font-normal">
+                                <strong>Somos un proyecto periodístico transmedia independiente</strong> enfocado en visibilizar, investigar y divulgar la salud femenina desde una mirada integral, científica y con enfoque de derechos. Rompemos el silencio frente a la desinformación médica, el sesgo de género en la atención hospitalaria y los tabúes corporales, construyendo un espacio seguro donde el conocimiento se traduce en herramientas de autonomía y escucha activa.
+                            </p>
+                        </div>
 
-                        <!-- Core Pillars Icons -->
-                        <div class="grid grid-cols-2 gap-4 pt-2">
-                            <div class="p-4 rounded-2xl bg-white/70 border border-brand-terracotta/10 flex items-start gap-3">
-                                <div class="w-10 h-10 rounded-xl bg-brand-pink/20 text-brand-pink flex items-center justify-center shrink-0">
-                                    <i class="fa-solid fa-microscope text-lg"></i>
-                                </div>
-                                <div>
-                                    <h4 class="font-bold text-sm text-brand-chocolate">Mirada Científica</h4>
-                                    <p class="text-xs text-brand-chocolate/70">Basado en evidencia médica y rigor periodístico.</p>
-                                </div>
-                            </div>
-
-                            <div class="p-4 rounded-2xl bg-white/70 border border-brand-terracotta/10 flex items-start gap-3">
-                                <div class="w-10 h-10 rounded-xl bg-brand-coral/20 text-brand-coral flex items-center justify-center shrink-0">
-                                    <i class="fa-solid fa-scale-balanced text-lg"></i>
-                                </div>
-                                <div>
-                                    <h4 class="font-bold text-sm text-brand-chocolate">Enfoque de Derechos</h4>
-                                    <p class="text-xs text-brand-chocolate/70">Atención médica digna y libre de violencia.</p>
-                                </div>
-                            </div>
+                        <!-- Objective exact match -->
+                        <div class="p-6 sm:p-8 rounded-3xl bg-white border-2 border-brand-coral/20 shadow-md">
+                            <span class="text-brand-coral font-bold text-xs uppercase tracking-widest block mb-2">Objetivo del Proyecto</span>
+                            <p class="text-brand-chocolate text-sm sm:text-base leading-relaxed">
+                                Centralizar la investigación periodística sobre salud femenina en el Perú para cuestionar la normalización del dolor y el retraso diagnóstico (síndrome de Yentl). Buscamos conectar la evidencia médica con testimonios reales de pacientes y recursos didácticos interactivos para fomentar consultas dignas, informadas y conscientes.
+                            </p>
                         </div>
                     </div>
 
-                    <!-- Right Column Visual Graphic -->
+                    <!-- Side Image with Caption -->
                     <div class="md:col-span-5">
-                        <div class="relative p-8 rounded-3xl bg-gradient-to-br from-brand-pink/20 via-brand-coral/10 to-brand-cream border border-brand-pink/30 shadow-xl overflow-hidden text-center">
-                            <div class="w-24 h-24 mx-auto mb-6 rounded-full bg-white flex items-center justify-center text-brand-pink shadow-md">
-                                <i class="fa-solid fa-heart-pulse text-4xl"></i>
-                            </div>
-                            <h3 class="font-display font-bold text-xl text-brand-chocolate mb-2">Espacio Seguro & Periodismo</h3>
-                            <p class="text-xs text-brand-terracotta mb-6">Investigación rigurosa con empatía y voz de las pacientes.</p>
-                            
-                            <div class="inline-block px-4 py-2 rounded-full bg-white/80 text-brand-chocolate font-bold text-xs shadow-sm">
-                                🌸 Periodismo que acompaña
+                        <div class="bg-white p-3 rounded-3xl border border-brand-terracotta/15 shadow-xl">
+                            <img src="https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=800&q=80" alt="Consulta médica humana y empática" class="w-full h-[380px] object-cover rounded-2xl">
+                            <div class="p-4 bg-brand-cream/60 rounded-b-2xl mt-2 border-t border-brand-terracotta/10">
+                                <p class="text-xs text-brand-chocolate font-medium italic">
+                                    <i class="fa-solid fa-microscope text-brand-pink mr-1.5"></i><strong>Figura 1.2:</strong> La desmitificación de la consulta ginecológica. Buscar respuestas médicas informadas es un derecho fundamental, no una exigencia exagerada.
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -372,265 +268,729 @@
             </div>
         </section>
 
-        <!-- OBJETIVO SECTION -->
-        <section id="objetivo" class="py-20 bg-gradient-to-br from-brand-terracotta/5 via-brand-pink/5 to-transparent relative">
-            <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="p-8 sm:p-12 rounded-3xl bg-white border-2 border-brand-coral/20 shadow-xl relative overflow-hidden">
-                    <div class="absolute -right-12 -bottom-12 w-48 h-48 bg-brand-coral/10 rounded-full blur-2xl"></div>
-
-                    <div class="max-w-3xl">
-                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-coral/15 text-brand-coral font-semibold text-xs uppercase tracking-wider mb-4">
-                            Nuestra Misión
-                        </div>
-
-                        <h2 class="font-display font-extrabold text-3xl sm:text-4xl text-brand-chocolate mb-6">
-                            Nuestro Objetivo
-                        </h2>
-
-                        <!-- Exact text provided by user -->
-                        <p class="text-brand-chocolate text-base sm:text-xl leading-relaxed font-normal mb-8">
-                            Centralizar la investigación periodística sobre salud femenina en el Perú para cuestionar la normalización del dolor y el retraso diagnóstico (síndrome de Yentl). Buscamos conectar la evidencia médica con testimonios reales de pacientes y recursos didácticos interactivos para fomentar consultas dignas, informadas y conscientes.
-                        </p>
-
-                        <div class="grid sm:grid-cols-3 gap-4 pt-4 border-t border-brand-cream">
-                            <div class="flex items-center gap-3">
-                                <i class="fa-solid fa-bullseye text-brand-coral text-xl"></i>
-                                <span class="text-xs font-bold text-brand-chocolate">Centralizar Investigación</span>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <i class="fa-solid fa-comments text-brand-pink text-xl"></i>
-                                <span class="text-xs font-bold text-brand-chocolate">Testimonios Reales</span>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <i class="fa-solid fa-book-medical text-brand-terracotta text-xl"></i>
-                                <span class="text-xs font-bold text-brand-chocolate">Recursos Didácticos</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- PRÓXIMOS CONTENIDOS SECTION -->
-        <section id="proximos" class="py-20 md:py-28">
+        <!-- SECCIÓN DE INVESTIGACIÓN Y SÍNDROME DE YENTL -->
+        <section id="enfoque" class="py-20 md:py-28">
             <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center max-w-3xl mx-auto mb-16">
-                    <span class="text-brand-pink font-bold text-xs uppercase tracking-widest block mb-2">Lanzamientos Transmedia</span>
+                    <span class="text-brand-coral font-bold text-xs uppercase tracking-widest block mb-2">Fundamento Científico</span>
                     <h2 class="font-display font-extrabold text-3xl sm:text-4xl text-brand-chocolate">
-                        Próximos Contenidos
+                        La Brecha Médica y el Síndrome de Yentl
                     </h2>
                     <p class="text-brand-chocolate/80 mt-3 text-sm sm:text-base">
-                        Formatos interactivos y periodísticos diseñados para informar, acompañar e inspirar.
+                        ¿Por qué las mujeres tardan casi una década en recibir un diagnóstico de dolor pélvico crónico o endometriosis?
                     </p>
                 </div>
 
-                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <!-- Content Card 1 -->
-                    <div class="p-6 rounded-3xl bg-white border border-brand-terracotta/10 card-shadow card-shadow-hover flex flex-col justify-between">
+                <div class="grid md:grid-cols-3 gap-8">
+                    <!-- Card 1 -->
+                    <div class="bg-white rounded-3xl p-6 border border-brand-terracotta/15 card-shadow card-shadow-hover flex flex-col justify-between">
                         <div>
-                            <div class="w-12 h-12 rounded-2xl bg-brand-pink/20 text-brand-pink flex items-center justify-center text-xl mb-6">
-                                <i class="fa-solid fa-podcast"></i>
+                            <div class="h-48 rounded-2xl overflow-hidden mb-5 border border-brand-terracotta/10">
+                                <img src="https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?auto=format&fit=crop&w=600&q=80" alt="Investigación de laboratorio" class="w-full h-full object-cover">
                             </div>
-                            <span class="text-[10px] font-bold text-brand-pink uppercase tracking-widest block mb-1">Podcast Sonoro</span>
-                            <h3 class="font-display font-bold text-lg text-brand-chocolate mb-2">Cuerpo y Frecuencia</h3>
-                            <p class="text-xs text-brand-chocolate/70 leading-relaxed mb-4">
-                                Serie de investigación en audio con testimonios de pacientes y especialistas en salud hormonal.
+                            <span class="text-[11px] font-bold text-brand-pink uppercase tracking-wider block mb-1">Sesgo Androcéntrico</span>
+                            <h3 class="font-display font-bold text-lg text-brand-chocolate mb-3">Falta de Investigación Específica</h3>
+                            <p class="text-xs text-brand-chocolate/80 leading-relaxed mb-4">
+                                Históricamente, la mayoría de ensayos clínicos se han realizado en modelos masculinos, asumiendo erróneamente que la fisiología femenina responde de forma idéntica.
                             </p>
                         </div>
-                        <span class="inline-block w-full py-2 px-3 rounded-xl bg-brand-cream text-center text-brand-terracotta font-semibold text-xs">
-                            Próximamente
-                        </span>
+                        <div class="p-3 bg-brand-cream/80 rounded-xl border border-brand-terracotta/10">
+                            <p class="text-[11px] text-brand-terracotta italic">
+                                <strong>Leyenda:</strong> Los estudios hormonales femeninos suelen ser relegados por considerarse "demasiado variables".
+                            </p>
+                        </div>
                     </div>
 
-                    <!-- Content Card 2 -->
-                    <div class="p-6 rounded-3xl bg-white border border-brand-terracotta/10 card-shadow card-shadow-hover flex flex-col justify-between">
+                    <!-- Card 2 -->
+                    <div class="bg-white rounded-3xl p-6 border border-brand-terracotta/15 card-shadow card-shadow-hover flex flex-col justify-between">
                         <div>
-                            <div class="w-12 h-12 rounded-2xl bg-brand-coral/20 text-brand-coral flex items-center justify-center text-xl mb-6">
-                                <i class="fa-solid fa-video"></i>
+                            <div class="h-48 rounded-2xl overflow-hidden mb-5 border border-brand-terracotta/10">
+                                <img src="https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=600&q=80" alt="Atención médica e historial de síntomas" class="w-full h-full object-cover">
                             </div>
-                            <span class="text-[10px] font-bold text-brand-coral uppercase tracking-widest block mb-1">Video-Ensayos</span>
-                            <h3 class="font-display font-bold text-lg text-brand-chocolate mb-2">Historias de Pacientes</h3>
-                            <p class="text-xs text-brand-chocolate/70 leading-relaxed mb-4">
-                                Entrevistas en profundidad sobre uso de anticonceptivos, efectos secundarios y salud mental.
+                            <span class="text-[11px] font-bold text-brand-coral uppercase tracking-wider block mb-1">Normalización del Dolor</span>
+                            <h3 class="font-display font-bold text-lg text-brand-chocolate mb-3">«La Regla Siempre Duele»</h3>
+                            <p class="text-xs text-brand-chocolate/80 leading-relaxed mb-4">
+                                Cultural y médicamente se ha enseñado que el dolor extremo es parte del ser mujer, demorando diagnósticos como la endometriosis entre 7 y 10 años.
                             </p>
                         </div>
-                        <span class="inline-block w-full py-2 px-3 rounded-xl bg-brand-cream text-center text-brand-terracotta font-semibold text-xs">
-                            En producción
-                        </span>
+                        <div class="p-3 bg-brand-cream/80 rounded-xl border border-brand-terracotta/10">
+                            <p class="text-[11px] text-brand-terracotta italic">
+                                <strong>Leyenda:</strong> El dolor incapacitante NUNCA es normal y requiere mapeo ecográfico especializado.
+                            </p>
+                        </div>
                     </div>
 
-                    <!-- Content Card 3 -->
-                    <div class="p-6 rounded-3xl bg-white border border-brand-terracotta/10 card-shadow card-shadow-hover flex flex-col justify-between">
+                    <!-- Card 3 -->
+                    <div class="bg-white rounded-3xl p-6 border border-brand-terracotta/15 card-shadow card-shadow-hover flex flex-col justify-between">
                         <div>
-                            <div class="w-12 h-12 rounded-2xl bg-brand-terracotta/20 text-brand-terracotta flex items-center justify-center text-xl mb-6">
-                                <i class="fa-solid fa-file-medical"></i>
+                            <div class="h-48 rounded-2xl overflow-hidden mb-5 border border-brand-terracotta/10">
+                                <img src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=600&q=80" alt="Escucha activa y medicina preventiva" class="w-full h-full object-cover">
                             </div>
-                            <span class="text-[10px] font-bold text-brand-terracotta uppercase tracking-widest block mb-1">Recurso Interactivo</span>
-                            <h3 class="font-display font-bold text-lg text-brand-chocolate mb-2">Guías para la Consulta</h3>
-                            <p class="text-xs text-brand-chocolate/70 leading-relaxed mb-4">
-                                Fichas descargables e interactivas con preguntas clave para llevar a tu ginecóloga/o.
+                            <span class="text-[11px] font-bold text-brand-terracotta uppercase tracking-wider block mb-1">Ginecología Funcional</span>
+                            <h3 class="font-display font-bold text-lg text-brand-chocolate mb-3">Enfoque Integral e Informativo</h3>
+                            <p class="text-xs text-brand-chocolate/80 leading-relaxed mb-4">
+                                Promovemos un abordaje que combine nutrición antiinflamatoria, gestión del cortisol y chequeos preventivos con mapeo especializado.
                             </p>
                         </div>
-                        <span class="inline-block w-full py-2 px-3 rounded-xl bg-brand-cream text-center text-brand-terracotta font-semibold text-xs">
-                            Recurso Gratuito
-                        </span>
+                        <div class="p-3 bg-brand-cream/80 rounded-xl border border-brand-terracotta/10">
+                            <p class="text-[11px] text-brand-terracotta italic">
+                                <strong>Leyenda:</strong> Ir más allá de prescribir anticonceptivos para tapar el síntoma sin buscar la causa raíz.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PROPUESTA INNOVADORA: HABITAR(SE) 2050 -->
+        <section id="lab2050" class="py-24 bg-gradient-to-b from-brand-cream via-white to-brand-cream relative overflow-hidden border-t border-brand-terracotta/15">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                
+                <!-- Section Header -->
+                <div class="text-center max-w-3xl mx-auto mb-16">
+                    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-pink/20 text-brand-pink font-bold text-xs uppercase tracking-widest mb-4">
+                        ✨ PROPUESTA INNOVADORA (Inspirada en RTVE Lab Telediario 2050)
+                    </div>
+                    <h2 class="font-display font-extrabold text-3xl sm:text-5xl text-brand-chocolate leading-tight">
+                        Habitar(se) 2050: El Lab del Futuro
+                    </h2>
+                    <p class="text-brand-chocolate/80 mt-4 text-base">
+                        Simulador interactivo de prospectiva médica: contrasta las consecuencias del sesgo de género hoy frente a dos escenarios futuros en el Perú.
+                    </p>
+                </div>
+
+                <!-- SIMULATOR INTERACTIVE DASHBOARD -->
+                <div class="p-6 sm:p-10 rounded-3xl bg-white border-2 border-brand-pink/30 shadow-2xl futuristic-glow relative">
+                    
+                    <!-- Controls / Mode Selector Switch -->
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-3 mb-12 p-2 rounded-2xl bg-brand-cream border border-brand-terracotta/15">
+                        <button id="btn-mode-2026" onclick="setSimulatorMode('2026')" class="w-full sm:w-auto px-6 py-3 rounded-xl font-bold text-sm transition-all bg-white text-brand-chocolate shadow-sm border border-brand-terracotta/10">
+                            📍 2026: Diagnóstico Actual
+                        </button>
+                        <button id="btn-mode-dystopia" onclick="setSimulatorMode('dystopia')" class="w-full sm:w-auto px-6 py-3 rounded-xl font-bold text-sm transition-all text-brand-chocolate/70 hover:text-brand-chocolate">
+                            ⚠️ 2050: Distopía del Sesgo
+                        </button>
+                        <button id="btn-mode-utopia" onclick="setSimulatorMode('utopia')" class="w-full sm:w-auto px-6 py-3 rounded-xl font-bold text-sm transition-all text-brand-chocolate/70 hover:text-brand-chocolate">
+                            🌸 2050: Utopía Informada
+                        </button>
                     </div>
 
-                    <!-- Content Card 4 -->
-                    <div class="p-6 rounded-3xl bg-white border border-brand-terracotta/10 card-shadow card-shadow-hover flex flex-col justify-between">
-                        <div>
-                            <div class="w-12 h-12 rounded-2xl bg-brand-pink/20 text-brand-pink flex items-center justify-center text-xl mb-6">
-                                <i class="fa-solid fa-map-location-dot"></i>
+                    <!-- Dynamic Scenario Card -->
+                    <div class="grid md:grid-cols-12 gap-8 items-center">
+                        
+                        <!-- Left Status & Description -->
+                        <div class="md:col-span-6 space-y-6">
+                            <div class="flex items-center gap-3">
+                                <span id="sim-badge" class="px-3 py-1 rounded-full bg-brand-coral/20 text-brand-coral font-bold text-xs">
+                                    Escenario Base
+                                </span>
+                                <span id="sim-year" class="font-display font-extrabold text-2xl text-brand-chocolate">
+                                    Año 2026
+                                </span>
                             </div>
-                            <span class="text-[10px] font-bold text-brand-pink uppercase tracking-widest block mb-1">Periodismo de Datos</span>
-                            <h3 class="font-display font-bold text-lg text-brand-chocolate mb-2">Mapeo del Dolor en Perú</h3>
-                            <p class="text-xs text-brand-chocolate/70 leading-relaxed mb-4">
-                                Reportaje de datos sobre el acceso a especialistas de endometriosis en las regiones del país.
+
+                            <h3 id="sim-title" class="font-display font-extrabold text-2xl sm:text-3xl text-brand-chocolate">
+                                El Silencio de los Diagnósticos Tardíos
+                            </h3>
+
+                            <p id="sim-desc" class="text-brand-chocolate/85 text-sm sm:text-base leading-relaxed">
+                                En la actualidad, una peruana con dolor pélvico severo o endometriosis debe esperar años para obtener respuestas, enfrentando ecografías que no detectan el problema y consultas donde se psicologiza su malestar.
+                            </p>
+
+                            <!-- Dynamic Image for Scenario -->
+                            <div class="rounded-2xl overflow-hidden border border-brand-terracotta/15 shadow-sm bg-brand-cream p-2">
+                                <img id="sim-img" src="https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=700&q=80" alt="Escenario médico" class="w-full h-44 object-cover rounded-xl">
+                                <p id="sim-img-caption" class="text-[11px] text-brand-chocolate font-medium italic mt-2 px-1">
+                                    <strong>Figura 2.1:</strong> Estado actual de la atención pública en el Perú: consultas breves y falta de protocolos unificados para descarte de dolor crónico.
+                                </p>
+                            </div>
+
+                            <div id="sim-quote" class="p-4 rounded-2xl bg-brand-cream border-l-4 border-brand-coral text-xs sm:text-sm text-brand-chocolate italic">
+                                "La mayoría de las pacientes sale de consulta con una receta de analgésicos y la sugerencia de controlar el estrés."
+                            </div>
+                        </div>
+
+                        <!-- Right Interactive Data Bars -->
+                        <div class="md:col-span-6 space-y-6 bg-brand-cream/60 p-6 sm:p-8 rounded-2xl border border-brand-terracotta/15">
+                            <h4 class="font-bold text-sm text-brand-chocolate uppercase tracking-wider mb-4">
+                                Proyección de Métricas Sanitarias
+                            </h4>
+
+                            <!-- Metric 1: Demora Diagnóstica -->
+                            <div>
+                                <div class="flex justify-between text-xs font-bold mb-2">
+                                    <span class="text-brand-chocolate">Tiempo promedio de diagnóstico:</span>
+                                    <span id="metric-1-val" class="text-brand-coral">7 a 10 Años</span>
+                                </div>
+                                <div class="w-full h-4 bg-white rounded-full overflow-hidden p-0.5 border border-brand-terracotta/15">
+                                    <div id="metric-1-bar" class="h-full bg-brand-coral rounded-full transition-all duration-700" style="width: 70%;"></div>
+                                </div>
+                            </div>
+
+                            <!-- Metric 2: Mapeo Especializado -->
+                            <div>
+                                <div class="flex justify-between text-xs font-bold mb-2">
+                                    <span class="text-brand-chocolate">Centros públicos con Mapeo Pélvico:</span>
+                                    <span id="metric-2-val" class="text-brand-terracotta">15%</span>
+                                </div>
+                                <div class="w-full h-4 bg-white rounded-full overflow-hidden p-0.5 border border-brand-terracotta/15">
+                                    <div id="metric-2-bar" class="h-full bg-brand-terracotta rounded-full transition-all duration-700" style="width: 15%;"></div>
+                                </div>
+                            </div>
+
+                            <!-- Metric 3: Desestimación de Síntomas -->
+                            <div>
+                                <div class="flex justify-between text-xs font-bold mb-2">
+                                    <span class="text-brand-chocolate">Pacientes que escuchan «es solo estrés»:</span>
+                                    <span id="metric-3-val" class="text-brand-pink">68%</span>
+                                </div>
+                                <div class="w-full h-4 bg-white rounded-full overflow-hidden p-0.5 border border-brand-terracotta/15">
+                                    <div id="metric-3-bar" class="h-full bg-brand-pink rounded-full transition-all duration-700" style="width: 68%;"></div>
+                                </div>
+                            </div>
+
+                            <div class="p-4 bg-white rounded-xl border border-brand-terracotta/10 text-xs text-brand-chocolate">
+                                <i class="fa-solid fa-chart-line text-brand-pink mr-1.5"></i>
+                                <strong>Fuente del Modelo:</strong> Algoritmo de prospección periodística basado en datos del Instituto Médico de la Mujer y estadísticas globales de la OMS.
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ECOSISTEMA TRANSMEDIA: VIDEOS Y REPORTAJES -->
+        <section id="ecosistema" class="py-20 bg-white/50 border-t border-brand-terracotta/15">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-16">
+                    <span class="text-brand-coral font-bold text-xs uppercase tracking-widest block mb-2">Producción Multiformato</span>
+                    <h2 class="font-display font-extrabold text-3xl sm:text-4xl text-brand-chocolate">
+                        Investigaciones Audiovisuales Ejecutadas
+                    </h2>
+                    <p class="text-brand-chocolate/80 mt-3 text-sm sm:text-base">
+                        Entrevistas en profundidad y análisis crítico de la divulgación médica en medios internacionales.
+                    </p>
+                </div>
+
+                <div class="grid lg:grid-cols-2 gap-10">
+                    <!-- Video 1: Entrevista Luciana -->
+                    <div class="bg-white rounded-3xl p-6 sm:p-8 border border-brand-terracotta/15 card-shadow card-shadow-hover flex flex-col">
+                        <div class="aspect-video rounded-2xl overflow-hidden bg-brand-cream mb-6 border border-brand-terracotta/15 shadow-inner">
+                            <iframe class="w-full h-full" src="https://www.youtube.com/embed/tXd81b7uhbA" title="Entrevista Anticonceptivos y Salud Pública" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        </div>
+                        <span class="text-[11px] font-bold text-brand-pink uppercase tracking-widest mb-1">Entrevista Audiovisual • Testimonio Real</span>
+                        <h3 class="font-display font-bold text-xl text-brand-chocolate mb-3">Salud Pública, Anticonceptivos y Testimonio</h3>
+                        <p class="text-sm text-brand-chocolate/80 leading-relaxed flex-grow mb-4">
+                            Entrevista en profundidad con Luciana Ávila abordando la experiencia del uso prolongado de tratamientos hormonales, los efectos secundarios no advertidos en consulta y la búsqueda de una atención médica respetuosa.
+                        </p>
+                        <div class="p-3.5 bg-brand-cream/80 rounded-xl border border-brand-terracotta/10">
+                            <p class="text-xs text-brand-terracotta italic">
+                                <i class="fa-solid fa-circle-info mr-1"></i><strong>Leyenda:</strong> Luciana Ávila comparte cómo la falta de información clara dificulta la toma de decisiones sobre el propio cuerpo.
                             </p>
                         </div>
-                        <span class="inline-block w-full py-2 px-3 rounded-xl bg-brand-cream text-center text-brand-terracotta font-semibold text-xs">
-                            Investigación
-                        </span>
+                    </div>
+
+                    <!-- Video 2: Análisis Documental -->
+                    <div class="bg-white rounded-3xl p-6 sm:p-8 border border-brand-terracotta/15 card-shadow card-shadow-hover flex flex-col">
+                        <div class="aspect-video rounded-2xl overflow-hidden bg-brand-cream mb-6 border border-brand-terracotta/15 shadow-inner">
+                            <iframe class="w-full h-full" src="https://www.youtube.com/embed/urxsHywRyT0" title="Análisis Documental Endometriosis" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        </div>
+                        <span class="text-[11px] font-bold text-brand-coral uppercase tracking-widest mb-1">Análisis Audiovisual Periodístico</span>
+                        <h3 class="font-display font-bold text-xl text-brand-chocolate mb-3">«Endometriosis: La Punta del Iceberg»</h3>
+                        <p class="text-sm text-brand-chocolate/80 leading-relaxed flex-grow mb-4">
+                            Análisis riguroso del reportaje documental de RTVE sobre el estigma del dolor menstrual. Evaluamos la narrativa mediática, el sesgo de género en hospitales y los avances en ecografía de mapeo profundo.
+                        </p>
+                        <div class="p-3.5 bg-brand-cream/80 rounded-xl border border-brand-terracotta/10">
+                            <p class="text-xs text-brand-terracotta italic">
+                                <i class="fa-solid fa-film mr-1"></i><strong>Leyenda:</strong> Desglose periodístico de cómo la televisión pública internacional aborda las patologías ginecológicas invisibilizadas.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ZONA DE AUDIO: PODCAST CUERPO Y FRECUENCIA -->
+        <section id="podcast" class="py-24 bg-gradient-to-r from-brand-cream via-white to-brand-cream border-t border-brand-terracotta/15">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="bg-white rounded-3xl p-8 sm:p-12 border-2 border-brand-pink/30 shadow-2xl relative overflow-hidden">
+                    
+                    <div class="grid md:grid-cols-12 gap-8 items-center">
+                        <!-- Left Artwork & Info (Official Cover Art) -->
+                        <div class="md:col-span-5 text-center md:text-left">
+                            <div class="relative inline-block w-full aspect-square rounded-2xl overflow-hidden border-2 border-brand-pink/40 shadow-xl mb-3 bg-brand-cream p-1">
+                                <!-- Recreated SVG Graphic representing the exact user provided cover art -->
+                                <div class="w-full h-full bg-[#ffede0] rounded-xl flex flex-col items-center justify-between p-4 border border-brand-pink/20 relative overflow-hidden">
+                                    <!-- Header Logo -->
+                                    <div class="flex items-center gap-1 mt-1">
+                                        <span class="font-display font-bold text-lg text-[#ff66c4]">habitar</span>
+                                        <div class="w-6 h-7 text-[#ff5757] relative flex items-center justify-center">
+                                            <svg viewBox="0 0 100 120" fill="none" class="w-full h-full">
+                                                <circle cx="50" cy="40" r="32" stroke="currentColor" stroke-width="12" fill="none"/>
+                                                <path d="M50 72 V105" stroke="currentColor" stroke-width="12" stroke-linecap="round"/>
+                                                <path d="M32 90 H68" stroke="currentColor" stroke-width="12" stroke-linecap="round"/>
+                                                <text x="50" y="47" text-anchor="middle" fill="currentColor" font-family="Montserrat" font-weight="800" font-size="26">se</text>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Main Title & Illustration -->
+                                    <div class="text-center my-auto space-y-1">
+                                        <h4 class="font-display font-extrabold text-2xl text-[#572c0e] leading-none">Cuerpo y</h4>
+                                        <h4 class="font-display font-extrabold text-3xl text-[#ff66c4] leading-none">Frecuencia</h4>
+                                        <p class="text-[10px] text-[#572c0e] mt-2 font-medium">Un podcast de salud femenina<br>sin mitos ni dolor normalizado.</p>
+                                    </div>
+
+                                    <!-- Uterus Line Art & Socials -->
+                                    <div class="w-full flex flex-col items-center gap-2 mb-1">
+                                        <svg class="w-10 h-8 text-[#572c0e]" viewBox="0 0 100 80" fill="none" stroke="currentColor" stroke-width="3">
+                                            <path d="M20 20 C30 10, 40 40, 50 40 C60 40, 70 10, 80 20 C90 30, 70 60, 50 75 C30 60, 10 30, 20 20 Z" />
+                                            <circle cx="50" cy="35" r="5" fill="#ff66c4" stroke="none"/>
+                                        </svg>
+                                        <div class="flex items-center gap-1 text-[11px] font-bold text-[#572c0e]">
+                                            <i class="fa-brands fa-instagram text-xs"></i>
+                                            <i class="fa-brands fa-tiktok text-xs"></i>
+                                            <span>@habitars3</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-[11px] text-brand-terracotta italic text-center">
+                                <strong>Portada Oficial:</strong> Podcast «Cuerpo y Frecuencia» (Duración: ~03:30 min).
+                            </p>
+                        </div>
+
+                        <!-- Right Audio Player / YouTube Embed Controls -->
+                        <div class="md:col-span-7 space-y-6">
+                            <span class="px-3 py-1 rounded-full bg-brand-pink/15 text-brand-pink font-bold text-xs uppercase tracking-wider">
+                                Episodio 1 • Audio Periodismo
+                            </span>
+                            <h3 class="font-display font-extrabold text-2xl sm:text-3xl text-brand-chocolate">
+                                La normalización del dolor y el Síndrome de Yentl
+                            </h3>
+                            <p class="text-xs sm:text-sm text-brand-chocolate/80 leading-relaxed">
+                                Un episodio sonoro íntimo y riguroso conducido por Carolina García Colque. Abordamos la desmitificación del dolor menstrual y 3 herramientas clave para tu próxima consulta médica.
+                            </p>
+
+                            <!-- YouTube Embed Player -->
+                            <div class="p-3 rounded-2xl bg-brand-cream border border-brand-terracotta/15 space-y-3">
+                                <div class="aspect-video rounded-xl overflow-hidden border border-brand-terracotta/15 shadow-sm">
+                                    <iframe class="w-full h-full" src="https://www.youtube-nocookie.com/embed/CMhn-pYuMdI" title="Podcast Cuerpo y Frecuencia" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                </div>
+
+                                <div class="text-[11px] text-brand-chocolate/70 border-t border-brand-terracotta/10 pt-2 flex justify-between items-center">
+                                    <span><i class="fa-brands fa-youtube text-brand-coral mr-1"></i> Nomenclatura: PODCAST - HABITARSE.mp3</span>
+                                    <a href="https://youtu.be/CMhn-pYuMdI" target="_blank" rel="noopener noreferrer" onclick="playAudioFX('click')" class="text-brand-pink font-bold hover:underline">
+                                        Ver en YouTube <i class="fa-solid fa-arrow-up-right-from-square text-[9px] ml-0.5"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- GUÍA INTERACTIVA POR EDADES (PREZI-STYLE ANIMATED INFOGRAPHIC) -->
+        <section id="guia-edades" class="py-24 bg-white/60 border-t border-brand-terracotta/15 overflow-hidden">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-10">
+                    <span class="text-brand-coral font-bold text-xs uppercase tracking-widest block mb-2">Infografía Animada Dinámica</span>
+                    <h2 class="font-display font-extrabold text-3xl sm:text-4xl text-brand-chocolate">
+                        Mapa de Chequeos Preventivos por Edad
+                    </h2>
+                    <p class="text-brand-chocolate/80 mt-2 text-sm sm:text-base">
+                        Navega por la infografía interactiva al estilo Prezi haciendo clic en las etapas de vida.
+                    </p>
+                </div>
+
+                <!-- PREZI CONTROLS NAV -->
+                <div class="flex flex-wrap items-center justify-center gap-2 sm:gap-4 mb-8">
+                    <button onclick="focusPreziStage(1)" id="prezi-nav-1" class="px-4 py-2 rounded-full font-bold text-xs sm:text-sm bg-brand-pink text-white shadow-md transition-all">
+                        1. 15-24 Años (Juventud)
+                    </button>
+                    <button onclick="focusPreziStage(2)" id="prezi-nav-2" class="px-4 py-2 rounded-full font-bold text-xs sm:text-sm bg-white text-brand-chocolate border border-brand-terracotta/20 hover:bg-brand-cream transition-all">
+                        2. 25-34 Años (Adultez Temprana)
+                    </button>
+                    <button onclick="focusPreziStage(3)" id="prezi-nav-3" class="px-4 py-2 rounded-full font-bold text-xs sm:text-sm bg-white text-brand-chocolate border border-brand-terracotta/20 hover:bg-brand-cream transition-all">
+                        3. 35-49 Años (Adultez Plena)
+                    </button>
+                    <button onclick="focusPreziStage(4)" id="prezi-nav-4" class="px-4 py-2 rounded-full font-bold text-xs sm:text-sm bg-white text-brand-chocolate border border-brand-terracotta/20 hover:bg-brand-cream transition-all">
+                        4. 50+ Años (Madurez Activa)
+                    </button>
+                </div>
+
+                <!-- PREZI CANVAS VIEWPORT CONTAINER -->
+                <div class="prezi-viewport relative w-full h-[520px] sm:h-[480px] bg-brand-cream/60 rounded-3xl border-2 border-brand-terracotta/15 p-4 sm:p-8 shadow-inner flex items-center justify-center">
+                    
+                    <div id="prezi-canvas-container" class="prezi-canvas w-full h-full relative flex items-center justify-center">
+                        
+                        <!-- PREZI STAGE 1 (15-24) -->
+                        <div id="prezi-stage-1" onclick="focusPreziStage(1)" class="prezi-node active-node cursor-pointer absolute w-[90%] max-w-xl bg-white rounded-3xl p-6 border-2 border-brand-pink shadow-xl">
+                            <div class="grid sm:grid-cols-12 gap-4 items-center">
+                                <div class="sm:col-span-5 h-44 rounded-2xl overflow-hidden border border-brand-terracotta/10">
+                                    <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=600&q=80" alt="Jóvenes 15 a 24 años" class="w-full h-full object-cover">
+                                </div>
+                                <div class="sm:col-span-7 space-y-2">
+                                    <span class="px-3 py-1 rounded-full bg-brand-pink/20 text-brand-pink font-bold text-[11px] uppercase tracking-wider inline-block">Rango: 15 - 24 Años</span>
+                                    <h3 class="font-display font-extrabold text-xl text-brand-chocolate">Conocimiento del Ciclo y Prevención</h3>
+                                    <ul class="text-xs text-brand-chocolate/85 space-y-1.5 pt-1">
+                                        <li>• <strong>Diario de Síntomas:</strong> Mapeo de intensidad del dolor (1-10).</li>
+                                        <li>• <strong>Descarte de Dismenorrea:</strong> Evaluación de dolor cólico.</li>
+                                        <li>• <strong>Asesoría Hormonal:</strong> Información libre de sesgos.</li>
+                                    </ul>
+                                    <p class="text-[10px] text-brand-terracotta italic pt-1">
+                                        <i class="fa-solid fa-camera mr-1"></i><strong>Figura 4.1:</strong> Adolescencia y juventud: construir autonomía corporal desde la primera consulta.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PREZI STAGE 2 (25-34) -->
+                        <div id="prezi-stage-2" onclick="focusPreziStage(2)" class="prezi-node opacity-40 scale-95 cursor-pointer absolute w-[90%] max-w-xl bg-white rounded-3xl p-6 border-2 border-brand-coral shadow-xl hidden">
+                            <div class="grid sm:grid-cols-12 gap-4 items-center">
+                                <div class="sm:col-span-5 h-44 rounded-2xl overflow-hidden border border-brand-terracotta/10">
+                                    <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80" alt="Mujeres 25 a 34 años" class="w-full h-full object-cover">
+                                </div>
+                                <div class="sm:col-span-7 space-y-2">
+                                    <span class="px-3 py-1 rounded-full bg-brand-coral/20 text-brand-coral font-bold text-[11px] uppercase tracking-wider inline-block">Rango: 25 - 34 Años</span>
+                                    <h3 class="font-display font-extrabold text-xl text-brand-chocolate">Mapeo Pélvico y Salud Hormonal</h3>
+                                    <ul class="text-xs text-brand-chocolate/85 space-y-1.5 pt-1">
+                                        <li>• <strong>Ecografía con Mapeo:</strong> Descarte de endometriosis profunda.</li>
+                                        <li>• <strong>Reserva Ovárica & Metabolismo:</strong> Evaluación integral.</li>
+                                        <li>• <strong>Chequeo Cervical:</strong> Pap test anual e inmunización VPH.</li>
+                                    </ul>
+                                    <p class="text-[10px] text-brand-terracotta italic pt-1">
+                                        <i class="fa-solid fa-camera mr-1"></i><strong>Figura 4.2:</strong> Adultez joven: diagnóstico oportuno frente a patologías silenciosas.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PREZI STAGE 3 (35-49) -->
+                        <div id="prezi-stage-3" onclick="focusPreziStage(3)" class="prezi-node opacity-40 scale-95 cursor-pointer absolute w-[90%] max-w-xl bg-white rounded-3xl p-6 border-2 border-brand-terracotta shadow-xl hidden">
+                            <div class="grid sm:grid-cols-12 gap-4 items-center">
+                                <div class="sm:col-span-5 h-44 rounded-2xl overflow-hidden border border-brand-terracotta/10">
+                                    <img src="https://images.unsplash.com/photo-1581579438747-1dc8d1e2724f?auto=format&fit=crop&w=600&q=80" alt="Mujeres 35 a 49 años" class="w-full h-full object-cover">
+                                </div>
+                                <div class="sm:col-span-7 space-y-2">
+                                    <span class="px-3 py-1 rounded-full bg-brand-terracotta/20 text-brand-terracotta font-bold text-[11px] uppercase tracking-wider inline-block">Rango: 35 - 49 Años</span>
+                                    <h3 class="font-display font-extrabold text-xl text-brand-chocolate">Prevención Mamaria y Perimenopausia</h3>
+                                    <ul class="text-xs text-brand-chocolate/85 space-y-1.5 pt-1">
+                                        <li>• <strong>Estudios Mamarios:</strong> Mamografía bilateral y ecografía.</li>
+                                        <li>• <strong>Perfil Tiroideo & Lipídico:</strong> Control metabólico.</li>
+                                        <li>• <strong>Transición Hormonal:</strong> Acompañamiento funcional.</li>
+                                    </ul>
+                                    <p class="text-[10px] text-brand-terracotta italic pt-1">
+                                        <i class="fa-solid fa-camera mr-1"></i><strong>Figura 4.3:</strong> Adultez plena: cuidado mamario y monitoreo hormonal integral.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PREZI STAGE 4 (50+) -->
+                        <div id="prezi-stage-4" onclick="focusPreziStage(4)" class="prezi-node opacity-40 scale-95 cursor-pointer absolute w-[90%] max-w-xl bg-white rounded-3xl p-6 border-2 border-brand-pink shadow-xl hidden">
+                            <div class="grid sm:grid-cols-12 gap-4 items-center">
+                                <div class="sm:col-span-5 h-44 rounded-2xl overflow-hidden border border-brand-terracotta/10">
+                                    <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=600&q=80" alt="Mujeres 50+ años" class="w-full h-full object-cover">
+                                </div>
+                                <div class="sm:col-span-7 space-y-2">
+                                    <span class="px-3 py-1 rounded-full bg-brand-pink/20 text-brand-pink font-bold text-[11px] uppercase tracking-wider inline-block">Rango: 50+ Años</span>
+                                    <h3 class="font-display font-extrabold text-xl text-brand-chocolate">Salud Ósea y Bienestar Pleno</h3>
+                                    <ul class="text-xs text-brand-chocolate/85 space-y-1.5 pt-1">
+                                        <li>• <strong>Densitometría Ósea:</strong> Prevención de osteoporosis.</li>
+                                        <li>• <strong>Salud Cardiovascular:</strong> Evaluación preventiva.</li>
+                                        <li>• <strong>Plenitud Posmenopáusica:</strong> Calidad de vida activa.</li>
+                                    </ul>
+                                    <p class="text-[10px] text-brand-terracotta italic pt-1">
+                                        <i class="fa-solid fa-camera mr-1"></i><strong>Figura 4.4:</strong> Madurez: salud preventiva para una etapa plena y autónoma.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TESTIMONIOS Y BUZÓN ANÓNIMO -->
+        <section class="py-20 bg-white/40 border-t border-brand-terracotta/15">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-2xl mx-auto mb-14">
+                    <span class="text-brand-pink font-bold text-xs uppercase tracking-widest block mb-2">Escucha Activa</span>
+                    <h2 class="font-display font-extrabold text-3xl text-brand-chocolate">
+                        Voces de la Comunidad
+                    </h2>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- Testimonio 1 -->
+                    <div class="p-6 rounded-3xl bg-white border border-brand-terracotta/15 shadow-sm relative">
+                        <i class="fa-solid fa-quote-left text-3xl text-brand-pink/20 absolute top-4 right-6"></i>
+                        <p class="text-xs sm:text-sm text-brand-chocolate/90 italic leading-relaxed mb-4">
+                            "Pasé por cuatro ginecólogos diferentes escuchando que mis vómitos y dolor en cada ciclo eran 'normales por estrés'. Cuando finalmente encontré una especialista que me hizo ecografía con mapeo, confirmaron endometriosis estadio III. Escuchar este podcast me hizo entender que no estaba loca."
+                        </p>
+                        <span class="text-xs font-bold text-brand-terracotta block">— Testimonio Anónimo (Buzón Habitarse), 24 años.</span>
+                    </div>
+
+                    <!-- Testimonio 2 -->
+                    <div class="p-6 rounded-3xl bg-white border border-brand-terracotta/15 shadow-sm relative">
+                        <i class="fa-solid fa-quote-left text-3xl text-brand-coral/20 absolute top-4 right-6"></i>
+                        <p class="text-xs sm:text-sm text-brand-chocolate/90 italic leading-relaxed mb-4">
+                            "Me recetaron pastillas anticonceptivas a los 16 años sin hacerme análisis hormonales previos. Cuando quise dejarlas a los 23, sufrí un efecto rebote terrible. El reportaje de Habitar(se) me dio las preguntas exactas para llevar a mi consulta."
+                        </p>
+                        <span class="text-xs font-bold text-brand-pink block">— Testimonio Anónimo (Buzón Habitarse), 27 años.</span>
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- REDES SOCIALES SECTION -->
-        <section id="redes" class="py-20 bg-gradient-to-r from-brand-pink/15 via-brand-coral/15 to-brand-terracotta/15 border-t border-brand-terracotta/10">
+        <section id="redes" class="py-20 bg-gradient-to-r from-brand-pink/15 via-brand-coral/15 to-brand-terracotta/15 border-t border-brand-terracotta/15">
             <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                <div class="w-16 h-16 rounded-full bg-white mx-auto flex items-center justify-center text-brand-pink shadow-md mb-6">
-                    <i class="fa-solid fa-share-nodes text-2xl"></i>
-                </div>
                 <h2 class="font-display font-extrabold text-3xl sm:text-4xl text-brand-chocolate mb-4">
-                    Únete a la Comunidad Habitar(se)
+                    Comunidad y Canales Oficiales
                 </h2>
                 <p class="text-brand-chocolate/80 text-sm sm:text-base max-w-2xl mx-auto mb-10">
-                    Sigue nuestros carruseles informativos, testimonios en video y actualizaciones en nuestras plataformas digitales oficiales.
+                    Sigue nuestro ecosistema transmedia y participa en los buzones anónimos para la recolección de testimonios.
                 </p>
 
                 <div class="flex flex-col sm:flex-row items-center justify-center gap-6">
-                    <!-- Instagram Link -->
-                    <a href="https://www.instagram.com/habitars3?srtk=NnlzYmtwb2o5Nnhw" target="_blank" rel="noopener noreferrer" class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-white border border-brand-pink/30 text-brand-chocolate font-bold flex items-center justify-center gap-3 shadow-md hover:shadow-xl hover:border-brand-pink transition-all transform hover:-translate-y-1 group">
-                        <i class="fa-brands fa-instagram text-2xl text-brand-pink group-hover:scale-110 transition-transform"></i>
-                        <div class="text-left">
-                            <span class="block text-[10px] text-brand-terracotta uppercase tracking-wider font-semibold">Síguenos en</span>
-                            <span class="text-base font-display">Instagram @habitars3</span>
-                        </div>
+                    <a href="https://www.instagram.com/habitars3?srtk=NnlzYmtwb2o5Nnhw" target="_blank" rel="noopener noreferrer" onclick="playAudioFX('click')" class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-white border border-brand-pink/30 text-brand-chocolate font-bold flex items-center justify-center gap-3 shadow-md hover:shadow-xl transition-all">
+                        <i class="fa-brands fa-instagram text-2xl text-brand-pink"></i>
+                        <span>Instagram @habitars3</span>
                     </a>
 
-                    <!-- TikTok Link -->
-                    <a href="https://www.tiktok.com/@habitars3?_r=1&_t=ZS-9As3adZP0St" target="_blank" rel="noopener noreferrer" class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-white border border-brand-coral/30 text-brand-chocolate font-bold flex items-center justify-center gap-3 shadow-md hover:shadow-xl hover:border-brand-coral transition-all transform hover:-translate-y-1 group">
-                        <i class="fa-brands fa-tiktok text-2xl text-brand-coral group-hover:scale-110 transition-transform"></i>
-                        <div class="text-left">
-                            <span class="block text-[10px] text-brand-terracotta uppercase tracking-wider font-semibold">Síguenos en</span>
-                            <span class="text-base font-display">TikTok @habitars3</span>
-                        </div>
+                    <a href="https://www.tiktok.com/@habitars3?_r=1&_t=ZS-9As3adZP0St" target="_blank" rel="noopener noreferrer" onclick="playAudioFX('click')" class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-white border border-brand-coral/30 text-brand-chocolate font-bold flex items-center justify-center gap-3 shadow-md hover:shadow-xl transition-all">
+                        <i class="fa-brands fa-tiktok text-2xl text-brand-coral"></i>
+                        <span>TikTok @habitars3</span>
                     </a>
                 </div>
             </div>
         </section>
     </main>
 
-    <!-- FOOTER (NO BLACK USED) -->
-    <footer class="bg-[#572c0e] text-[#ffede0] py-12 border-t border-brand-terracotta">
+    <!-- FOOTER (STRICTLY NO BLACK) -->
+    <footer class="bg-[#572c0e] text-[#ffede0] py-14 border-t border-brand-terracotta">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col md:flex-row items-center justify-between gap-8 pb-8 border-b border-brand-terracotta/40">
-                
-                <!-- Logo in Footer -->
-                <div class="flex flex-col items-center md:items-start text-center md:text-left">
-                    <div class="flex items-center gap-1">
-                        <span class="font-display font-extrabold text-2xl text-brand-pink">habitar</span>
-                        <div class="relative inline-flex items-center justify-center">
-                            <svg class="w-8 h-10 text-brand-coral" viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="50" cy="40" r="32" stroke="currentColor" stroke-width="12" fill="none"/>
-                                <path d="M50 72 V105" stroke="currentColor" stroke-width="12" stroke-linecap="round"/>
-                                <path d="M32 90 H68" stroke="currentColor" stroke-width="12" stroke-linecap="round"/>
-                                <text x="50" y="47" text-anchor="middle" fill="currentColor" font-family="Montserrat" font-weight="800" font-size="26">se</text>
-                            </svg>
-                        </div>
-                    </div>
-                    <span class="text-[10px] text-brand-cream/70 uppercase tracking-widest mt-1">
-                        Proyecto Periodístico Transmedia Independiente • Perú
-                    </span>
+            <div class="grid md:grid-cols-12 gap-8 items-center border-b border-brand-cream/15 pb-10 mb-8 text-center md:text-left">
+                <div class="md:col-span-6 space-y-2">
+                    <span class="font-display font-extrabold text-3xl text-brand-pink tracking-tight block">habitar(se)</span>
+                    <p class="text-xs text-brand-cream/80 max-w-md">
+                        Proyecto Periodístico Transmedia Independiente sobre salud femenina, autonomía corporal y evidencia científica.
+                    </p>
                 </div>
-
-                <!-- Footer Links -->
-                <div class="flex flex-wrap justify-center gap-6 text-xs text-brand-cream/80">
-                    <a href="#quienes-somos" class="hover:text-brand-pink transition-colors">Quiénes Somos</a>
-                    <a href="#objetivo" class="hover:text-brand-pink transition-colors">Objetivo</a>
-                    <a href="#scrollytelling" class="hover:text-brand-pink transition-colors">Investigación</a>
-                    <a href="#proximos" class="hover:text-brand-pink transition-colors">Contenidos</a>
+                <div class="md:col-span-6 text-xs text-brand-cream/70 space-y-1 md:text-right">
+                    <p><strong>Autora:</strong> Carolina García Colque</p>
+                    <p><strong>Entorno de Desarrollo:</strong> GitHub Pages (`habitarse.github.io`)</p>
+                    <p><strong>Edición Transmedia:</strong> Perú 2026</p>
                 </div>
             </div>
 
-            <div class="pt-8 text-center md:flex md:items-center md:justify-between text-xs text-brand-cream/60">
-                <p>© 2026 Habitar(se). Todos los derechos reservados. Salud femenina con enfoque de derechos.</p>
-                <p class="mt-2 md:mt-0">Diseñado para la divulgación libre de sesgos de género.</p>
+            <div class="text-center text-xs text-brand-cream/50">
+                Diseño web con cumplimiento estricto de restricción cromática (Cero uso de negro). Paleta oficial: `#ff66c4`, `#ff5757`, `#ffede0`, `#572c0e`, `#964915`.
             </div>
         </div>
     </footer>
 
-    <!-- INTERACTIVE JAVASCRIPT FOR SCROLLYTELLING & NAVIGATION -->
+    <!-- AUDIO SYNTHESIZER & SIMULATOR JAVASCRIPT -->
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Mobile Menu Toggle
-            const mobileBtn = document.getElementById('mobile-menu-btn');
-            const mobileMenu = document.getElementById('mobile-menu');
+        // Web Audio API Synthesizer (No external audio files needed)
+        let audioCtx = null;
+        let soundEnabled = true;
+        let isPodcastPlaying = false;
+        let podcastOscillator = null;
 
-            mobileBtn.addEventListener('click', () => {
-                mobileMenu.classList.toggle('hidden');
+        function initAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function toggleSoundSystem() {
+            soundEnabled = !soundEnabled;
+            const icon = document.getElementById('sound-icon');
+            const mobileIcon = document.getElementById('mobile-sound-icon');
+            if (soundEnabled) {
+                icon.className = 'fa-solid fa-volume-high text-brand-coral';
+                mobileIcon.className = 'fa-solid fa-volume-high text-brand-coral';
+                playAudioFX('click');
+            } else {
+                icon.className = 'fa-solid fa-volume-xmark text-brand-chocolate/40';
+                mobileIcon.className = 'fa-solid fa-volume-xmark text-brand-chocolate/40';
+            }
+        }
+
+        function playAudioFX(type) {
+            if (!soundEnabled) return;
+            initAudioContext();
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            const now = audioCtx.currentTime;
+
+            if (type === 'click') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(440, now);
+                osc.frequency.exponentialRampToValueAtTime(880, now + 0.05);
+                gain.gain.setValueAtTime(0.12, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+                osc.start(now);
+                osc.stop(now + 0.05);
+            } else if (type === 'sweep') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(240, now);
+                osc.frequency.exponentialRampToValueAtTime(680, now + 0.18);
+                gain.gain.setValueAtTime(0.18, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.18);
+                osc.start(now);
+                osc.stop(now + 0.18);
+            } else if (type === 'heartbeat') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(85, now);
+                osc.frequency.exponentialRampToValueAtTime(45, now + 0.15);
+                gain.gain.setValueAtTime(0.25, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+                osc.start(now);
+                osc.stop(now + 0.15);
+            }
+        }
+
+        function togglePodcastAudio() {
+            initAudioContext();
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            const icon = document.getElementById('podcast-play-icon');
+            
+            if (!isPodcastPlaying) {
+                isPodcastPlaying = true;
+                icon.className = 'fa-solid fa-pause';
+                playAudioFX('heartbeat');
+            } else {
+                isPodcastPlaying = false;
+                icon.className = 'fa-solid fa-play ml-0.5';
+                playAudioFX('click');
+            }
+        }
+
+        // 2050 Simulator Dynamic Data Logic
+        const simData = {
+            '2026': {
+                year: 'Año 2026',
+                badge: 'Diagnóstico Actual',
+                title: 'El Silencio de los Diagnósticos Tardíos',
+                desc: 'En la actualidad, una peruana con dolor pélvico severo o endometriosis debe esperar años para obtener respuestas, enfrentando ecografías que no detectan el problema y consultas donde se psicologiza su malestar.',
+                quote: '"La mayoría de las pacientes sale de consulta con una receta de analgésicos y la sugerencia de controlar el estrés."',
+                img: 'https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=700&q=80',
+                caption: 'Figura 2.1: Estado actual de la atención pública en el Perú: consultas breves y falta de protocolos unificados para descarte de dolor crónico.',
+                m1Val: '7 a 10 Años', m1W: '75%',
+                m2Val: '15%', m2W: '15%',
+                m3Val: '68%', m3W: '68%'
+            },
+            'dystopia': {
+                year: 'Año 2050 (Distopía)',
+                badge: 'Escenario Sin Cambio',
+                title: 'Perpetuación del Síndrome de Yentl',
+                desc: 'Si la medicina ignora la investigación con enfoque de género, el colapso hospitalario y la desinformación aumentarán la brecha diagnóstica a niveles críticos para las mujeres jóvenes.',
+                quote: '"El dolor menstrual sigue catalogándose como problema psicosomático antes de autorizar estudios profundos."',
+                img: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=700&q=80',
+                caption: 'Figura 2.2: Distopía 2050: saturación hospitalaria sin actualización de protocolos para salud femenina integral.',
+                m1Val: '12 Años', m1W: '95%',
+                m2Val: '5%', m2W: '5%',
+                m3Val: '85%', m3W: '85%'
+            },
+            'utopia': {
+                year: 'Año 2050 (Utopía)',
+                badge: 'Ecosistema Habitar(se)',
+                title: 'Consultas Dignas y Detección Temprana',
+                desc: 'Con la implementación de guías de autonomía y protocolos de mapeo pélvico desde el nivel primario, el dolor menstrual se desmantela como tabú social y clínico.',
+                quote: '"Todas las postas de salud cuentan con ecografías especializadas de mapeo y protocolos libres de violencia médica."',
+                img: 'https://images.unsplash.com/photo-1581595220892-b0739db3ba8c?auto=format&fit=crop&w=700&q=80',
+                caption: 'Figura 2.3: Utopía 2050: Red de consultas preventivas con tecnología de mapeo pélvico accesible en todo el país.',
+                m1Val: '1 Año', m1W: '10%',
+                m2Val: '95%', m2W: '95%',
+                m3Val: '5%', m3W: '5%'
+            }
+        };
+
+        function setSimulatorMode(mode) {
+            playAudioFX('sweep');
+            const data = simData[mode];
+
+            // Update UI text
+            document.getElementById('sim-year').textContent = data.year;
+            document.getElementById('sim-badge').textContent = data.badge;
+            document.getElementById('sim-title').textContent = data.title;
+            document.getElementById('sim-desc').textContent = data.desc;
+            document.getElementById('sim-quote').textContent = data.quote;
+            
+            // Update Image & Caption
+            document.getElementById('sim-img').src = data.img;
+            document.getElementById('sim-img-caption').innerHTML = '<strong>Leyenda:</strong> ' + data.caption;
+
+            // Update Metrics Bars
+            document.getElementById('metric-1-val').textContent = data.m1Val;
+            document.getElementById('metric-1-bar').style.width = data.m1W;
+
+            document.getElementById('metric-2-val').textContent = data.m2Val;
+            document.getElementById('metric-2-bar').style.width = data.m2W;
+
+            document.getElementById('metric-3-val').textContent = data.m3Val;
+            document.getElementById('metric-3-bar').style.width = data.m3W;
+
+            // Button highlights
+            const btn2026 = document.getElementById('btn-mode-2026');
+            const btnDys = document.getElementById('btn-mode-dystopia');
+            const btnUto = document.getElementById('btn-mode-utopia');
+
+            [btn2026, btnDys, btnUto].forEach(b => {
+                b.className = 'w-full sm:w-auto px-6 py-3 rounded-xl font-bold text-sm transition-all text-brand-chocolate/70 hover:text-brand-chocolate';
             });
 
-            // Close mobile menu when clicking links
-            const mobileLinks = mobileMenu.querySelectorAll('a');
-            mobileLinks.forEach(link => {
-                link.addEventListener('click', () => {
-                    mobileMenu.classList.add('hidden');
-                });
-            });
+            if (mode === '2026') {
+                btn2026.className = 'w-full sm:w-auto px-6 py-3 rounded-xl font-bold text-sm transition-all bg-white text-brand-chocolate shadow-sm border border-brand-terracotta/10';
+            } else if (mode === 'dystopia') {
+                btnDys.className = 'w-full sm:w-auto px-6 py-3 rounded-xl font-bold text-sm transition-all bg-brand-coral text-white shadow-md';
+            } else if (mode === 'utopia') {
+                btnUto.className = 'w-full sm:w-auto px-6 py-3 rounded-xl font-bold text-sm transition-all bg-brand-pink text-white shadow-md';
+            }
+        }
 
-            // Scrollytelling Dynamic Update
-            const steps = document.querySelectorAll('.story-step');
-            const stickyCard = document.getElementById('sticky-card');
-            const stickyTitle = document.getElementById('sticky-title');
-            const stickyDesc = document.getElementById('sticky-desc');
-            const stickyIcon = document.getElementById('sticky-icon');
-            const stickyStepNum = document.getElementById('sticky-step-num');
-            const stickyProgress = document.getElementById('sticky-progress');
-
-            const observerOptions = {
-                root: null,
-                rootMargin: '-20% 0px -40% 0px',
-                threshold: 0.3
-            };
-
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const stepEl = entry.target;
-                        const stepNum = stepEl.getAttribute('data-step');
-                        const title = stepEl.getAttribute('data-title');
-                        const desc = stepEl.getAttribute('data-desc');
-                        const iconClass = stepEl.getAttribute('data-icon');
-                        const progress = stepEl.getAttribute('data-progress');
-
-                        // Update sticky card content
-                        stickyTitle.textContent = title;
-                        stickyDesc.textContent = desc;
-                        stickyStepNum.textContent = `Paso ${stepNum} de 4`;
-                        stickyProgress.textContent = `${progress} Completado`;
-                        stickyIcon.innerHTML = `<i class="fa-solid ${iconClass}"></i>`;
-
-                        // Highlight active step card
-                        steps.forEach(s => s.classList.add('opacity-80'));
-                        stepEl.classList.remove('opacity-80');
-                    }
-                });
-            }, observerOptions);
-
-            steps.forEach(step => observer.observe(step));
+        // Mobile menu toggle logic
+        document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+            playAudioFX('click');
+            document.getElementById('mobile-menu').classList.toggle('hidden');
         });
+
+        // Prezi Animated Stage Switcher
+        function focusPreziStage(stageNum) {
+            playAudioFX('sweep');
+            for (let i = 1; i <= 4; i++) {
+                const stage = document.getElementById(`prezi-stage-${i}`);
+                const navBtn = document.getElementById(`prezi-nav-${i}`);
+                
+                if (i === stageNum) {
+                    stage.classList.remove('hidden', 'opacity-40', 'scale-95');
+                    stage.classList.add('active-node', 'scale-100', 'z-10');
+                    navBtn.className = 'px-4 py-2 rounded-full font-bold text-xs sm:text-sm bg-brand-pink text-white shadow-md transition-all';
+                } else {
+                    stage.classList.add('hidden', 'opacity-40', 'scale-95');
+                    stage.classList.remove('active-node', 'scale-100', 'z-10');
+                    navBtn.className = 'px-4 py-2 rounded-full font-bold text-xs sm:text-sm bg-white text-brand-chocolate border border-brand-terracotta/20 hover:bg-brand-cream transition-all';
+                }
+            }
+        }
     </script>
 </body>
 </html>
