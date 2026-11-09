@@ -201,11 +201,11 @@
                     <a href="#lab2050" onclick="playAudioFX('sweep')" class="w-full sm:w-auto px-8 py-4 rounded-full bg-brand-pink text-white font-bold text-base hover:bg-brand-coral transition-all shadow-lg shadow-brand-pink/30 transform hover:-translate-y-1 text-center">
                         Explorar Lab 2050 <i class="fa-solid fa-sparkles ml-2"></i>
                     </a>
+                    <a href="juego-cartas.html" target="_blank" onclick="playAudioFX('sweep')" class="w-full sm:w-auto px-8 py-4 rounded-full bg-white border-2 border-brand-pink text-brand-chocolate font-bold text-base hover:bg-brand-pink hover:text-white transition-all shadow-md text-center">
+                        <i class="fa-solid fa-cards-blank mr-2 text-brand-pink"></i> Jugar Baraja de Autonomía <i class="fa-solid fa-arrow-up-right-from-square text-xs ml-1"></i>
+                    </a>
                     <a href="#podcast" onclick="playAudioFX('click')" class="w-full sm:w-auto px-8 py-4 rounded-full bg-brand-coral text-white font-bold text-base hover:bg-brand-pink transition-all shadow-md text-center">
                         <i class="fa-solid fa-headphones mr-2"></i> Escuchar Podcast
-                    </a>
-                    <a href="#ecosistema" onclick="playAudioFX('click')" class="w-full sm:w-auto px-8 py-4 rounded-full bg-white border border-brand-terracotta/20 text-brand-chocolate font-bold text-base hover:bg-white/80 transition-all text-center">
-                        Ver Investigaciones
                     </a>
                 </div>
 
@@ -363,7 +363,7 @@
                 <div class="p-6 sm:p-10 rounded-3xl bg-white border-2 border-brand-pink/30 shadow-2xl futuristic-glow relative">
                     
                     <!-- Controls / Mode Selector Switch -->
-                    <div class="flex flex-col sm:flex-row items-center justify-center gap-3 mb-12 p-2 rounded-2xl bg-brand-cream border border-brand-terracotta/15">
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-3 mb-8 p-2 rounded-2xl bg-brand-cream border border-brand-terracotta/15">
                         <button id="btn-mode-2026" onclick="setSimulatorMode('2026')" class="w-full sm:w-auto px-6 py-3 rounded-xl font-bold text-sm transition-all bg-white text-brand-chocolate shadow-sm border border-brand-terracotta/10">
                             📍 2026: Diagnóstico Actual
                         </button>
@@ -373,6 +373,18 @@
                         <button id="btn-mode-utopia" onclick="setSimulatorMode('utopia')" class="w-full sm:w-auto px-6 py-3 rounded-xl font-bold text-sm transition-all text-brand-chocolate/70 hover:text-brand-chocolate">
                             🌸 2050: Utopía Informada
                         </button>
+                    </div>
+
+                    <!-- Direct Link to Card Game PWA -->
+                    <div class="text-center mb-8 p-4 bg-brand-cream/60 rounded-2xl border border-brand-pink/30 flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div class="text-left space-y-1">
+                            <span class="text-xs font-bold text-brand-pink uppercase tracking-wider"><i class="fa-solid fa-gamepad mr-1"></i> Experiencia Interactiva Transmedia</span>
+                            <h4 class="font-display font-bold text-base text-brand-chocolate">Baraja de la Autonomía: Juego de Toma de Decisiones</h4>
+                            <p class="text-xs text-brand-chocolate/80">Pon a prueba tu criterio médico frente a situaciones reales del Síndrome de Yentl y la salud menstrual.</p>
+                        </div>
+                        <a href="juego-cartas.html" target="_blank" onclick="playAudioFX('sweep')" class="px-6 py-3 rounded-full bg-brand-pink text-white font-bold text-xs sm:text-sm hover:bg-brand-coral transition-all shadow-md whitespace-nowrap">
+                            Abrir Juego de Cartas <i class="fa-solid fa-arrow-up-right-from-square text-xs ml-1.5"></i>
+                        </a>
                     </div>
 
                     <!-- Dynamic Scenario Card -->
