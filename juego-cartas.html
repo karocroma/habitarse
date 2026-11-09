@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Habitar(se) | La Baraja de la Autonomía (Juego de Cartas)</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            pink: '#ff66c4',
+                            coral: '#ff5757',
+                            cream: '#ffede0',
+                            chocolate: '#572c0e',
+                            terracotta: '#964915'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Montserrat', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Strict Color Guardrail: Absolutely NO Black (#572c0e & #964915 replace all dark accents) */
+        body {
+            background-color: #ffede0;
+            color: #572c0e;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            user-select: none;
+        }
+
+        ::selection {
+            background-color: #ff66c4;
+            color: #ffede0;
+        }
+
+        /* 3D Card Flip Perspective */
+        .card-perspective {
+            perspective: 1200px;
+        }
+
+        .card-inner {
+            transition: transform 0.7s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+
+        .card-inner.is-flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-front, .card-back {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 1.5rem;
+        }
+
+        .card-front {
+            z-index: 2;
+            transform: rotateY(0deg);
+        }
+
+        .card-back {
+            transform: rotateY(180deg);
+        }
+
+        /* Ambient Glow animation */
+        @keyframes subtle-glow {
+            0%, 100% { box-shadow: 0 10px 25px -5px rgba(255, 102, 196, 0.25); }
+            50% { box-shadow: 0 15px 35px 0px rgba(255, 87, 87, 0.4); }
+        }
+
+        .glow-card {
+            animation: subtle-glow 4s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-brand-pink selection:text-brand-cream">
+
+    <!-- HEADER / GAME TOP BAR -->
+    <header class="w-full bg-white/80 backdrop-blur-md border-b border-brand-terracotta/15 py-4 px-4 sm:px-8 sticky top-0 z-40">
+        <div class="max-w-6xl mx-auto flex items-center justify-between">
+            
+            <!-- Logo Habitar(se) -->
+            <a href="index.html" class="flex items-center gap-2 group">
+                <div class="flex flex-col">
+                    <div class="flex items-center gap-1">
+                        <span class="font-display font-extrabold text-xl sm:text-2xl text-[#ff66c4]">habitar</span>
+                        <div class="relative inline-flex items-center justify-center">
+                            <svg class="w-7 h-9 text-[#ff5757] transition-transform group-hover:scale-105" viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="50" cy="40" r="32" stroke="currentColor" stroke-width="12" fill="none"/>
+                                <path d="M50 72 V105" stroke="currentColor" stroke-width="12" stroke-linecap="round"/>
+                                <path d="M32 90 H68" stroke="currentColor" stroke-width="12" stroke-linecap="round"/>
+                                <text x="50" y="47" text-anchor="middle" fill="currentColor" font-family="Montserrat" font-weight="800" font-size="26">se</text>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Audio & Exit Controls -->
+            <div class="flex items-center gap-3">
+                <button id="sound-btn" onclick="toggleSound()" class="px-3.5 py-2 rounded-full bg-brand-cream border border-brand-terracotta/20 text-brand-chocolate text-xs font-bold hover:bg-white transition-all flex items-center gap-2">
+                    <i id="sound-icon" class="fa-solid fa-volume-high text-brand-coral"></i>
+                    <span class="hidden sm:inline">Sonido</span>
+                </button>
+                
+                <a href="index.html" class="px-4 py-2 rounded-full bg-brand-terracotta/15 text-brand-terracotta font-bold text-xs hover:bg-brand-terracotta hover:text-white transition-all">
+                    <i class="fa-solid fa-arrow-left mr-1.5"></i> Volver a la Web
+                </a>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- MAIN GAME CONTAINER -->
+    <main class="flex-grow max-w-5xl w-full mx-auto px-4 py-6 sm:py-10 flex flex-col justify-center">
+        
+        <!-- DASHBOARD STATS BAR -->
+        <div class="bg-white/90 rounded-3xl p-5 sm:p-7 border-2 border-brand-pink/30 shadow-xl mb-8">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 items-center text-center">
+                
+                <!-- Autonomy Score -->
+                <div class="flex flex-col items-center">
+                    <span class="text-xs font-bold uppercase tracking-widest text-brand-terracotta mb-1">Puntos de Autonomía</span>
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-heart-pulse text-2xl text-brand-pink animate-pulse"></i>
+                        <span id="score-display" class="font-display font-extrabold text-3xl sm:text-4xl text-brand-chocolate">100</span>
+                        <span class="text-xs font-bold text-brand-terracotta">/ 100</span>
+                    </div>
+                    <!-- Progress Bar -->
+                    <div class="w-full h-3 bg-brand-cream rounded-full mt-2 overflow-hidden border border-brand-terracotta/15">
+                        <div id="score-bar" class="h-full bg-gradient-to-r from-brand-coral to-brand-pink rounded-full transition-all duration-500" style="width: 100%;"></div>
+                    </div>
+                </div>
+
+                <!-- Round Counter -->
+                <div class="flex flex-col items-center border-y sm:border-y-0 sm:border-x border-brand-terracotta/15 py-3 sm:py-0">
+                    <span class="text-xs font-bold uppercase tracking-widest text-brand-terracotta mb-1">Ronda Actual</span>
+                    <div class="font-display font-extrabold text-3xl sm:text-4xl text-brand-chocolate">
+                        <span id="round-display">1</span> <span class="text-lg text-brand-terracotta font-normal">/ 5</span>
+                    </div>
+                    <span class="text-[11px] text-brand-terracotta/80 mt-1">Elige 1 opción por ronda</span>
+                </div>
+
+                <!-- Status Goal -->
+                <div class="flex flex-col items-center">
+                    <span class="text-xs font-bold uppercase tracking-widest text-brand-terracotta mb-1">Meta de Consulta</span>
+                    <span id="status-badge" class="px-4 py-1.5 rounded-full bg-brand-pink/20 text-brand-pink font-bold text-xs uppercase tracking-wider">
+                        Consulta Digna (> 60 Pts)
+                    </span>
+                    <span class="text-[11px] text-brand-chocolate/70 mt-1.5 italic">Evita el Sesgo Médico</span>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- GAMEPLAY BOARD / CARD CHOICES -->
+        <div id="gameplay-area" class="space-y-6">
+            
+            <div class="text-center max-w-xl mx-auto mb-4">
+                <h2 id="round-title" class="font-display font-extrabold text-xl sm:text-2xl text-brand-chocolate">
+                    Ronda 1: La Primera Consulta
+                </h2>
+                <p id="round-subtitle" class="text-xs sm:text-sm text-brand-chocolate/80 mt-1">
+                    Selecciona una de las dos cartas para tomar una decisión en tu atención ginecológica:
+                </p>
+            </div>
+
+            <!-- CARDS CONTAINER (TWO CHOICES PER ROUND) -->
+            <div class="grid md:grid-cols-2 gap-6 sm:gap-8 max-w-4xl mx-auto">
+                
+                <!-- CARD OPTION A -->
+                <div onclick="selectCard('A')" class="card-perspective h-[360px] sm:h-[390px] cursor-pointer group">
+                    <div id="card-inner-A" class="card-inner w-full h-full relative glow-card">
+                        
+                        <!-- CARD FRONT (Cover) -->
+                        <div class="card-front bg-gradient-to-br from-white via-brand-cream to-white border-2 border-brand-pink/40 shadow-xl p-6 flex flex-col justify-between items-center text-center group-hover:border-brand-pink transition-all">
+                            <div class="w-12 h-12 rounded-2xl bg-brand-pink/15 flex items-center justify-center text-brand-pink font-display font-bold text-xl">
+                                A
+                            </div>
+                            
+                            <div class="space-y-3">
+                                <div class="w-16 h-16 rounded-full bg-brand-pink/10 flex items-center justify-center mx-auto text-brand-pink text-3xl">
+                                    <i id="card-icon-A" class="fa-solid fa-notes-medical"></i>
+                                </div>
+                                <h3 id="card-title-A" class="font-display font-bold text-lg text-brand-chocolate">
+                                    Opción A
+                                </h3>
+                                <p class="text-xs text-brand-chocolate/70">
+                                    Haz clic para revelar esta postura en consulta
+                                </p>
+                            </div>
+
+                            <div class="px-4 py-2 rounded-full bg-brand-pink text-white font-bold text-xs group-hover:bg-brand-coral transition-colors">
+                                Voltear Carta <i class="fa-solid fa-rotate ml-1"></i>
+                            </div>
+                        </div>
+
+                        <!-- CARD BACK (Revealed Result) -->
+                        <div id="card-back-A" class="card-back bg-white border-2 border-brand-coral shadow-2xl p-6 flex flex-col justify-between text-left">
+                            <div class="flex items-center justify-between border-b border-brand-terracotta/10 pb-3">
+                                <span id="card-badge-A" class="px-3 py-1 rounded-full text-xs font-bold bg-brand-coral/20 text-brand-coral">
+                                    Resultado
+                                </span>
+                                <span id="card-pts-A" class="font-display font-extrabold text-lg text-brand-coral">
+                                    -20 Pts
+                                </span>
+                            </div>
+
+                            <div class="space-y-2 my-auto">
+                                <h4 id="card-res-title-A" class="font-display font-bold text-base text-brand-chocolate">
+                                    Título Resultado A
+                                </h4>
+                                <p id="card-res-desc-A" class="text-xs text-brand-chocolate/85 leading-relaxed">
+                                    Explicación periodística y clínica.
+                                </p>
+                            </div>
+
+                            <div class="p-3 bg-brand-cream rounded-xl text-[11px] text-brand-terracotta italic border border-brand-terracotta/10">
+                                <i class="fa-solid fa-lightbulb text-brand-coral mr-1"></i>
+                                <span id="card-lesson-A">Lección periodística</span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- CARD OPTION B -->
+                <div onclick="selectCard('B')" class="card-perspective h-[360px] sm:h-[390px] cursor-pointer group">
+                    <div id="card-inner-B" class="card-inner w-full h-full relative glow-card">
+                        
+                        <!-- CARD FRONT (Cover) -->
+                        <div class="card-front bg-gradient-to-br from-white via-brand-cream to-white border-2 border-brand-coral/40 shadow-xl p-6 flex flex-col justify-between items-center text-center group-hover:border-brand-coral transition-all">
+                            <div class="w-12 h-12 rounded-2xl bg-brand-coral/15 flex items-center justify-center text-brand-coral font-display font-bold text-xl">
+                                B
+                            </div>
+                            
+                            <div class="space-y-3">
+                                <div class="w-16 h-16 rounded-full bg-brand-coral/10 flex items-center justify-center mx-auto text-brand-coral text-3xl">
+                                    <i id="card-icon-B" class="fa-solid fa-stethoscope"></i>
+                                </div>
+                                <h3 id="card-title-B" class="font-display font-bold text-lg text-brand-chocolate">
+                                    Opción B
+                                </h3>
+                                <p class="text-xs text-brand-chocolate/70">
+                                    Haz clic para revelar esta postura en consulta
+                                </p>
+                            </div>
+
+                            <div class="px-4 py-2 rounded-full bg-brand-coral text-white font-bold text-xs group-hover:bg-brand-pink transition-colors">
+                                Voltear Carta <i class="fa-solid fa-rotate ml-1"></i>
+                            </div>
+                        </div>
+
+                        <!-- CARD BACK (Revealed Result) -->
+                        <div id="card-back-B" class="card-back bg-white border-2 border-brand-pink shadow-2xl p-6 flex flex-col justify-between text-left">
+                            <div class="flex items-center justify-between border-b border-brand-terracotta/10 pb-3">
+                                <span id="card-badge-B" class="px-3 py-1 rounded-full text-xs font-bold bg-brand-pink/20 text-brand-pink">
+                                    Resultado
+                                </span>
+                                <span id="card-pts-B" class="font-display font-extrabold text-lg text-brand-pink">
+                                    +20 Pts
+                                </span>
+                            </div>
+
+                            <div class="space-y-2 my-auto">
+                                <h4 id="card-res-title-B" class="font-display font-bold text-base text-brand-chocolate">
+                                    Título Resultado B
+                                </h4>
+                                <p id="card-res-desc-B" class="text-xs text-brand-chocolate/85 leading-relaxed">
+                                    Explicación periodística y clínica.
+                                </p>
+                            </div>
+
+                            <div class="p-3 bg-brand-cream rounded-xl text-[11px] text-brand-terracotta italic border border-brand-terracotta/10">
+                                <i class="fa-solid fa-lightbulb text-brand-pink mr-1"></i>
+                                <span id="card-lesson-B">Lección periodística</span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- NEXT ROUND BUTTON (HIDDEN INITIALLY) -->
+            <div class="text-center pt-4">
+                <button id="next-btn" onclick="nextRound()" class="hidden px-8 py-3.5 rounded-full bg-brand-pink text-white font-bold text-sm hover:bg-brand-coral transition-all shadow-lg shadow-brand-pink/30 transform hover:-translate-y-0.5">
+                    Siguiente Ronda <i class="fa-solid fa-arrow-right ml-2"></i>
+                </button>
+            </div>
+
+        </div>
+
+        <!-- END GAME RESULTS SCREEN (WIN / LOSE MODAL) -->
+        <div id="end-screen" class="hidden max-w-2xl mx-auto bg-white rounded-3xl p-8 sm:p-10 border-2 border-brand-pink/40 shadow-2xl text-center space-y-6">
+            
+            <div id="end-icon-box" class="w-24 h-24 rounded-full bg-brand-pink/15 flex items-center justify-center mx-auto text-brand-pink text-5xl">
+                <i id="end-icon" class="fa-solid fa-trophy"></i>
+            </div>
+
+            <div class="space-y-2">
+                <span id="end-badge" class="px-4 py-1.5 rounded-full bg-brand-pink/20 text-brand-pink font-bold text-xs uppercase tracking-widest inline-block">
+                    Resultado Final
+                </span>
+                <h2 id="end-title" class="font-display font-extrabold text-3xl sm:text-4xl text-brand-chocolate">
+                    ¡Consulta Digna e Informada!
+                </h2>
+                <p id="end-desc" class="text-sm text-brand-chocolate/85 max-w-lg mx-auto leading-relaxed">
+                    Has logrado defender tu autonomía corporal frente al sesgo médico.
+                </p>
+            </div>
+
+            <div class="p-6 bg-brand-cream/80 rounded-2xl border border-brand-terracotta/15 max-w-md mx-auto space-y-2">
+                <div class="text-xs font-bold text-brand-terracotta uppercase tracking-wider">Puntuación Final</div>
+                <div id="end-score-final" class="font-display font-extrabold text-4xl text-brand-chocolate">
+                    85 Puntos
+                </div>
+                <p id="end-eval" class="text-xs text-brand-chocolate/80 italic">
+                    Excelente capacidad de cuestionamiento y demanda de atención médica informada.
+                </p>
+            </div>
+
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
+                <button onclick="restartGame()" class="w-full sm:w-auto px-8 py-3.5 rounded-full bg-brand-pink text-white font-bold text-sm hover:bg-brand-coral transition-all shadow-md">
+                    <i class="fa-solid fa-rotate-right mr-2"></i> Jugar de Nuevo
+                </button>
+                <a href="index.html" class="w-full sm:w-auto px-8 py-3.5 rounded-full bg-white border border-brand-terracotta/25 text-brand-chocolate font-bold text-sm hover:bg-brand-cream transition-all">
+                    Volver a la Web Principal
+                </a>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="w-full py-6 text-center text-xs text-brand-terracotta border-t border-brand-terracotta/10 bg-white/40">
+        Habitar(se) • Recurso Transmedia Interactivo de Periodismo de Salud Femenina
+    </footer>
+
+    <!-- GAME LOGIC SCRIPT -->
+    <script>
+        // Web Audio API Synthesizer
+        let audioCtx = null;
+        let soundEnabled = true;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const icon = document.getElementById('sound-icon');
+            if (soundEnabled) {
+                icon.className = 'fa-solid fa-volume-high text-brand-coral';
+                playSFX('flip');
+            } else {
+                icon.className = 'fa-solid fa-volume-xmark text-brand-chocolate/40';
+            }
+        }
+
+        function playSFX(type) {
+            if (!soundEnabled) return;
+            initAudio();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            const now = audioCtx.currentTime;
+
+            if (type === 'flip') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(300, now);
+                osc.frequency.exponentialRampToValueAtTime(600, now + 0.08);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+                osc.start(now);
+                osc.stop(now + 0.08);
+            } else if (type === 'win') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523.25, now); // C5
+                osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
+                osc.frequency.setValueAtTime(783.99, now + 0.2); // G5
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+                osc.start(now);
+                osc.stop(now + 0.35);
+            } else if (type === 'lose') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(300, now);
+                osc.frequency.exponentialRampToValueAtTime(150, now + 0.25);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+                osc.start(now);
+                osc.stop(now + 0.25);
+            } else if (type === 'gameover_win') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(440, now);
+                osc.frequency.exponentialRampToValueAtTime(880, now + 0.4);
+                gain.gain.setValueAtTime(0.25, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                osc.start(now);
+                osc.stop(now + 0.4);
+            }
+        }
+
+        // Game State Variables
+        let currentRound = 1;
+        let score = 100;
+        let isCardSelected = false;
+
+        // Rounds Data based on Journalism Investigation
+        const roundsData = [
+            {
+                title: "Ronda 1: Ante los Cólicos Desmayantes",
+                sub: "Visitas la posta de salud por dolores menstruales severos que te impiden estudiar.",
+                optionA: {
+                    icon: "fa-solid fa-comment-slash",
+                    title: "Aceptar que 'es solo estrés'",
+                    badge: "Normalización del Dolor",
+                    pts: -25,
+                    resTitle: "Retraso Diagnóstico Aceptado",
+                    resDesc: "Te retiras sin investigar la causa. La desestimación del dolor es el pilar del Síndrome de Yentl en la consulta pública.",
+                    lesson: "El dolor desmedido NUNCA es normal. Exige una evaluación ginecológica sin sesgos."
+                },
+                optionB: {
+                    icon: "fa-solid fa-clipboard-list",
+                    title: "Presentar un Diario de Síntomas",
+                    badge: "Autonomía e Información",
+                    pts: +15,
+                    resTitle: "Datos Clínicos Indiscutibles",
+                    resDesc: "Muestras las fechas e intensidad registrada del 1 al 10. Transformas la molestia en evidencia que el médico debe registrar.",
+                    lesson: "Llevar registros escritos evita que psicologicen tu malestar en consulta."
+                }
+            },
+            {
+                title: "Ronda 2: Prescripción de Anticonceptivos",
+                sub: "Te sugieren tomar pastillas anticonceptivas para calmar el malestar.",
+                optionA: {
+                    icon: "fa-solid fa-pills",
+                    title: "Tomarlas sin preguntar la causa raíz",
+                    badge: "Solución Parche",
+                    pts: -20,
+                    resTitle: "Máscara de Síntomas",
+                    resDesc: "Las pastillas pueden aliviar el dolor, pero si sufres de endometriosis o SOP, la patología seguirá avanzando sin diagnóstico.",
+                    lesson: "Cuestiona si el tratamiento cura el desbalance o solo lo tapa mientras dura la dosis."
+                },
+                optionB: {
+                    icon: "fa-solid fa-file-medical",
+                    title: "Exigir análisis hormonales previos",
+                    badge: "Consulta Consciente",
+                    pts: +20,
+                    resTitle: "Evaluación Integral",
+                    resDesc: "Pides descartar condiciones metabólicas y hormonales antes de iniciar cualquier tratamiento sintomático.",
+                    lesson: "Tienes derecho a saber qué pasa en tu cuerpo antes de ingerir hormonas sintéticas."
+                }
+            },
+            {
+                title: "Ronda 3: La Prueba Ecográfica",
+                sub: "La ecografía transvaginal de rutina sale completamente limpia, pero el dolor persiste.",
+                optionA: {
+                    icon: "fa-solid fa-user-doctor",
+                    title: "Conformarse y no pedir más estudios",
+                    badge: "Conformismo Diagnosticado",
+                    pts: -20,
+                    resTitle: "Falso Positivo de Salud",
+                    resDesc: "Una ecografía básica NO detecta endometriosis profunda. Crees estar sana mientras el tejido continúa extendiéndose.",
+                    lesson: "Las ecografías comunes suelen pasar por alto la endometriosis en fases tempranas."
+                },
+                optionB: {
+                    icon: "fa-solid fa-microscope",
+                    title: "Pedir Ecografía con Mapeo Pélvico",
+                    badge: "Especialización Clínca",
+                    pts: +25,
+                    resTitle: "Diagnóstico de Alta Precisión",
+                    resDesc: "Solicitas una orden para ecografía especializada de mapeo profundo realizada por un ginecólogo capacitado.",
+                    lesson: "El mapeo pélvico es la herramienta clave para detectar focos de endometriosis."
+                }
+            },
+            {
+                title: "Ronda 4: Relación con el Especialista",
+                sub: "El doctor te interrumpe y te dice que 'exageras tus molestias por ser joven'.",
+                optionA: {
+                    icon: "fa-solid fa-face-frown",
+                    title: "Guardar silencio por timidez",
+                    badge: "Sumisión Médica",
+                    pts: -25,
+                    resTitle: "Violencia Simbólica Tolerada",
+                    resDesc: "Permites que desautoricen la vivencia de tu propio cuerpo, perpetuando el trato paternalista en hospitales.",
+                    lesson: "Ningún profesional tiene derecho a invalidar los síntomas que experimentas."
+                },
+                optionB: {
+                    icon: "fa-solid fa-hand-fist",
+                    title: "Solicitar cambio de médico o segunda opinión",
+                    badge: "Defensa de Derechos",
+                    pts: +20,
+                    resTitle: "Decisión de Respeto Corporal",
+                    resDesc: "Ejerces tu derecho a cambiar de profesional hasta encontrar una consulta basada en la escucha activa y la empatía.",
+                    lesson: "Buscar una segunda opinión informada es un acto de responsabilidad con tu salud."
+                }
+            },
+            {
+                title: "Ronda 5: Difusión en Comunidad",
+                sub: "Una amiga te cuenta que sufre de dolores incapacitantes y no sabe qué hacer.",
+                optionA: {
+                    icon: "fa-solid fa-comment-dots",
+                    title: "Decirle que 'es normal y nos pasa a todas'",
+                    badge: "Mito Perpetuado",
+                    pts: -30,
+                    resTitle: "Perpetuación del Tabú",
+                    resDesc: "Transmites el mito que demorará el diagnóstico de tu amiga durante años.",
+                    lesson: "Normalizar el dolor entre mujeres rompe la cadena de apoyo y divulgación."
+                },
+                optionB: {
+                    icon: "fa-solid fa-share-nodes",
+                    title: "Compartir la Guía y Podcast de Habitar(se)",
+                    badge: "Red de Apoyo",
+                    pts: +20,
+                    resTitle: "Comunidad Informada y Emancipada",
+                    resDesc: "Le entregas herramientas periodísticas para que acuda informada a su cita ginecológica.",
+                    lesson: "El conocimiento compartido salva a más mujeres del retraso diagnóstico."
+                }
+            }
+        ];
+
+        function loadRound(roundIndex) {
+            const data = roundsData[roundIndex - 1];
+            isCardSelected = false;
+
+            // Reset Flip animations
+            document.getElementById('card-inner-A').classList.remove('is-flipped');
+            document.getElementById('card-inner-B').classList.remove('is-flipped');
+            document.getElementById('next-btn').classList.add('hidden');
+
+            // Header info
+            document.getElementById('round-display').textContent = roundIndex;
+            document.getElementById('round-title').textContent = data.title;
+            document.getElementById('round-subtitle').textContent = data.sub;
+
+            // Card A Front
+            document.getElementById('card-icon-A').className = data.optionA.icon;
+            document.getElementById('card-title-A').textContent = data.optionA.title;
+
+            // Card A Back
+            document.getElementById('card-badge-A').textContent = data.optionA.badge;
+            document.getElementById('card-pts-A').textContent = (data.optionA.pts > 0 ? '+' : '') + data.optionA.pts + ' Pts';
+            document.getElementById('card-pts-A').className = 'font-display font-extrabold text-lg ' + (data.optionA.pts > 0 ? 'text-brand-pink' : 'text-brand-coral');
+            document.getElementById('card-res-title-A').textContent = data.optionA.resTitle;
+            document.getElementById('card-res-desc-A').textContent = data.optionA.resDesc;
+            document.getElementById('card-lesson-A').textContent = data.optionA.lesson;
+
+            // Card B Front
+            document.getElementById('card-icon-B').className = data.optionB.icon;
+            document.getElementById('card-title-B').textContent = data.optionB.title;
+
+            // Card B Back
+            document.getElementById('card-badge-B').textContent = data.optionB.badge;
+            document.getElementById('card-pts-B').textContent = (data.optionB.pts > 0 ? '+' : '') + data.optionB.pts + ' Pts';
+            document.getElementById('card-pts-B').className = 'font-display font-extrabold text-lg ' + (data.optionB.pts > 0 ? 'text-brand-pink' : 'text-brand-coral');
+            document.getElementById('card-res-title-B').textContent = data.optionB.resTitle;
+            document.getElementById('card-res-desc-B').textContent = data.optionB.resDesc;
+            document.getElementById('card-lesson-B').textContent = data.optionB.lesson;
+        }
+
+        function selectCard(choice) {
+            if (isCardSelected) return;
+            isCardSelected = true;
+
+            const round = roundsData[currentRound - 1];
+            const selectedOption = choice === 'A' ? round.optionA : round.optionB;
+
+            // Flip visual
+            playSFX('flip');
+            document.getElementById(`card-inner-${choice}`).classList.add('is-flipped');
+
+            // Update score
+            score = Math.max(0, score + selectedOption.pts);
+            updateScoreUI();
+
+            if (selectedOption.pts > 0) {
+                setTimeout(() => playSFX('win'), 400);
+            } else {
+                setTimeout(() => playSFX('lose'), 400);
+            }
+
+            // Show Next Button or End Game
+            setTimeout(() => {
+                if (score <= 0 || currentRound === 5) {
+                    showEndScreen();
+                } else {
+                    document.getElementById('next-btn').classList.remove('hidden');
+                }
+            }, 800);
+        }
+
+        function updateScoreUI() {
+            document.getElementById('score-display').textContent = score;
+            const bar = document.getElementById('score-bar');
+            bar.style.width = `${score}%`;
+
+            const badge = document.getElementById('status-badge');
+            if (score >= 60) {
+                badge.textContent = 'Consulta Digna (> 60 Pts)';
+                badge.className = 'px-4 py-1.5 rounded-full bg-brand-pink/20 text-brand-pink font-bold text-xs uppercase tracking-wider';
+            } else {
+                badge.textContent = 'Riesgo de Sesgo (< 60 Pts)';
+                badge.className = 'px-4 py-1.5 rounded-full bg-brand-coral/20 text-brand-coral font-bold text-xs uppercase tracking-wider';
+            }
+        }
+
+        function nextRound() {
+            if (currentRound < 5) {
+                currentRound++;
+                loadRound(currentRound);
+            } else {
+                showEndScreen();
+            }
+        }
+
+        function showEndScreen() {
+            document.getElementById('gameplay-area').classList.add('hidden');
+            const endScreen = document.getElementById('end-screen');
+            endScreen.classList.remove('hidden');
+
+            const endTitle = document.getElementById('end-title');
+            const endBadge = document.getElementById('end-badge');
+            const endDesc = document.getElementById('end-desc');
+            const endIcon = document.getElementById('end-icon');
+            const endIconBox = document.getElementById('end-icon-box');
+            const endScoreFinal = document.getElementById('end-score-final');
+            const endEval = document.getElementById('end-eval');
+
+            endScoreFinal.textContent = `${score} Puntos`;
+
+            if (score >= 60) {
+                playSFX('gameover_win');
+                endBadge.textContent = '¡VICTORIA TRANSMEDIA!';
+                endBadge.className = 'px-4 py-1.5 rounded-full bg-brand-pink/20 text-brand-pink font-bold text-xs uppercase tracking-widest inline-block';
+                endTitle.textContent = '¡Has alcanzado una Consulta Digna!';
+                endDesc.textContent = 'Felicidades. Lograste cuestionar la desinformación médica, defender tu autonomía corporal y exigir diagnósticos oportunos sin normalizar el dolor.';
+                endEval.textContent = 'Excelente nivel de autonomía corporal e información clínica.';
+                endIcon.className = 'fa-solid fa-trophy text-brand-pink';
+                endIconBox.className = 'w-24 h-24 rounded-full bg-brand-pink/15 flex items-center justify-center mx-auto text-brand-pink text-5xl';
+            } else {
+                playSFX('lose');
+                endBadge.textContent = 'SESGO MÉDICO SUFRIDO';
+                endBadge.className = 'px-4 py-1.5 rounded-full bg-brand-coral/20 text-brand-coral font-bold text-xs uppercase tracking-widest inline-block';
+                endTitle.textContent = 'El Sesgo Minimizó tus Síntomas';
+                endDesc.textContent = 'Caíste en la normalización del dolor o aceptaste parches sintomáticos sin investigar la causa de fondo. ¡Vuelve a intentarlo para empoderar tu consulta!';
+                endEval.textContent = 'Revisa las lecciones periodísticas e intenta defender tu autonomía nuevamente.';
+                endIcon.className = 'fa-solid fa-triangle-exclamation text-brand-coral';
+                endIconBox.className = 'w-24 h-24 rounded-full bg-brand-coral/15 flex items-center justify-center mx-auto text-brand-coral text-5xl';
+            }
+        }
+
+        function restartGame() {
+            currentRound = 1;
+            score = 100;
+            updateScoreUI();
+            document.getElementById('end-screen').classList.add('hidden');
+            document.getElementById('gameplay-area').classList.remove('hidden');
+            loadRound(1);
+        }
+
+        // Initialize game on load
+        window.onload = function() {
+            loadRound(1);
+        };
+    </script>
+</body>
+</html>
