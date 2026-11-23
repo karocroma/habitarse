@@ -1,0 +1,1704 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Habitar(se) | La Cartografía del Dolor Invisible — Demo Interactiva</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Montserrat & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,600;0,700;0,800;0,900;1,600&family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              pink: '#ff66c4',
+              coral: '#ff5757',
+              cream: '#ffede0',
+              chocolate: '#572c0e',
+              terracotta: '#964915',
+              card: '#fffaf7'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Montserrat', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* REGLA ESTRICTA: CERO COLOR NEGRO (#000000). Todo contraste con #572c0e y #964915 */
+    body {
+      background-color: #ffede0;
+      color: #572c0e;
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+    }
+
+    ::selection {
+      background-color: #ff66c4;
+      color: #fffaf7;
+    }
+
+    .warm-shadow {
+      box-shadow: 0 14px 36px -6px rgba(87, 44, 14, 0.10);
+    }
+
+    .warm-shadow-lg {
+      box-shadow: 0 22px 48px -8px rgba(87, 44, 14, 0.16);
+    }
+
+    /* Animaciones de pines en el mapa */
+    @keyframes pin-pulse-terracotta {
+      0% { transform: scale(1); opacity: 0.75; }
+      70% { transform: scale(2.1); opacity: 0; }
+      100% { transform: scale(2.1); opacity: 0; }
+    }
+
+    @keyframes pin-pulse-pink {
+      0% { transform: scale(1); opacity: 0.8; }
+      70% { transform: scale(2.1); opacity: 0; }
+      100% { transform: scale(2.1); opacity: 0; }
+    }
+
+    .pulse-ring-terracotta {
+      animation: pin-pulse-terracotta 2.4s infinite ease-out;
+      transform-origin: center;
+      transform-box: fill-box;
+    }
+
+    .pulse-ring-pink {
+      animation: pin-pulse-pink 2.4s infinite ease-out;
+      transform-origin: center;
+      transform-box: fill-box;
+    }
+
+    .map-pin-group {
+      cursor: pointer;
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transform-origin: center;
+      transform-box: fill-box;
+    }
+
+    .map-pin-group:hover {
+      transform: scale(1.25);
+    }
+
+    /* Ecualizador de audio animado */
+    @keyframes eq-bounce {
+      0%, 100% { height: 6px; }
+      50% { height: 24px; }
+    }
+
+    .eq-active .eq-bar {
+      animation: eq-bounce 0.9s infinite ease-in-out;
+    }
+    .eq-active .eq-bar:nth-child(2) { animation-delay: 0.15s; }
+    .eq-active .eq-bar:nth-child(3) { animation-delay: 0.3s; }
+    .eq-active .eq-bar:nth-child(4) { animation-delay: 0.45s; }
+    .eq-active .eq-bar:nth-child(5) { animation-delay: 0.2s; }
+    .eq-active .eq-bar:nth-child(6) { animation-delay: 0.35s; }
+
+    /* Notas del mural con ligera inclinación orgánica */
+    .sticky-note {
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .sticky-note:hover {
+      transform: translateY(-4px) rotate(0deg) !important;
+      box-shadow: 0 18px 34px -6px rgba(87, 44, 14, 0.16);
+    }
+
+    /* Transiciones de pestañas */
+    .tab-panel {
+      animation: fadeSlideUp 0.35s ease forwards;
+    }
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- BANNER SUPERIOR DE DEMO INTERACTIVA -->
+  <div class="bg-[#572c0e] text-[#ffede0] px-4 py-2 text-center text-[11px] sm:text-xs font-display font-bold tracking-widest uppercase flex items-center justify-center gap-2 border-b border-[#964915]">
+    <span class="w-2 h-2 rounded-full bg-[#ff66c4] animate-ping"></span>
+    <span>DEMO INTERACTIVA · PROPUESTA DE FUTURO HABITAR(SE) · TESTIMONIOS DE EJEMPLO FICTICIOS</span>
+  </div>
+
+  <!-- HEADER PRINCIPAL -->
+  <header class="sticky top-0 z-40 bg-[#ffede0]/95 backdrop-blur-md border-b border-[#964915]/20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4">
+      
+      <!-- LOGO OFICIAL HABITAR(SE) -->
+      <a href="#top" onclick="playFX('click')" class="flex items-center gap-2.5 group focus:outline-none">
+        <div class="flex items-center">
+          <span class="font-display font-black text-2xl sm:text-3xl tracking-tight text-[#ff66c4]">habitar</span>
+          <svg class="w-8 h-10 sm:w-9 sm:h-11 text-[#ff5757] ml-0.5 transition-transform group-hover:scale-105" viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <circle cx="50" cy="40" r="32" stroke="currentColor" stroke-width="12" fill="none"/>
+            <path d="M50 72 V105" stroke="currentColor" stroke-width="12" stroke-linecap="round"/>
+            <path d="M32 90 H68" stroke="currentColor" stroke-width="12" stroke-linecap="round"/>
+            <text x="50" y="48" text-anchor="middle" fill="currentColor" font-family="Montserrat, sans-serif" font-weight="800" font-size="27">se</text>
+          </svg>
+        </div>
+        <div class="hidden sm:block border-l border-[#964915]/25 pl-3">
+          <span class="block font-display font-extrabold text-xs uppercase tracking-wider text-[#572c0e]">La Cartografía del Dolor Invisible</span>
+          <span class="block text-[11px] text-[#964915]">Museo vivo y archivo interactivo · Perú</span>
+        </div>
+      </a>
+
+      <!-- NAVEGACIÓN ENTRE LAS 3 EXPERIENCIAS -->
+      <nav class="flex items-center gap-1.5 sm:gap-2 bg-[#fffaf7] p-1.5 rounded-full border border-[#964915]/20 warm-shadow overflow-x-auto max-w-full">
+        <button id="nav-tab-mapa" onclick="switchExperience('mapa')" class="nav-pill px-3.5 sm:px-4 py-2 rounded-full font-display font-bold text-xs sm:text-sm bg-[#ff66c4] text-[#fffaf7] transition-all whitespace-nowrap">
+          <i class="fa-solid fa-map-pin mr-1.5"></i>1. Mapa Vivo
+        </button>
+        <button id="nav-tab-zapatos" onclick="switchExperience('zapatos')" class="nav-pill px-3.5 sm:px-4 py-2 rounded-full font-display font-bold text-xs sm:text-sm text-[#572c0e] hover:bg-[#ffede0] transition-all whitespace-nowrap">
+          <i class="fa-solid fa-shoe-prints mr-1.5 text-[#ff5757]"></i>2. En sus zapatos
+        </button>
+        <button id="nav-tab-cabina" onclick="switchExperience('cabina')" class="nav-pill px-3.5 sm:px-4 py-2 rounded-full font-display font-bold text-xs sm:text-sm text-[#572c0e] hover:bg-[#ffede0] transition-all whitespace-nowrap">
+          <i class="fa-solid fa-headphones mr-1.5 text-[#964915]"></i>3. Habitar(se) en vivo
+        </button>
+      </nav>
+
+      <!-- CONTROL DE SONIDO WEB AUDIO API -->
+      <button id="audio-master-btn" onclick="toggleMasterAudio()" class="px-3.5 py-2 rounded-full bg-[#fffaf7] border border-[#964915]/25 text-[#572c0e] hover:border-[#ff66c4] font-semibold text-xs flex items-center gap-2 transition-all warm-shadow" title="Activar o silenciar efectos sonoros sintetizados">
+        <i id="audio-master-icon" class="fa-solid fa-volume-high text-[#ff5757]"></i>
+        <span id="audio-master-label" class="hidden md:inline">Sonido activo</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main id="top" class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+
+    <!-- =====================================================================
+         EXPERIENCIA 1: MAPA INTERACTIVO DE CICATRICES Y ALIVIOS (PERÚ)
+    ====================================================================== -->
+    <section id="exp-mapa" class="tab-panel space-y-6">
+      
+      <!-- Encabezado y controles del Mapa -->
+      <div class="bg-[#fffaf7] rounded-3xl p-6 sm:p-8 border border-[#964915]/20 warm-shadow flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+        <div class="max-w-2xl space-y-2">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#ff66c4]/15 text-[#964915] font-display font-bold text-[11px] uppercase tracking-wider">
+            <i class="fa-solid fa-earth-americas text-[#ff66c4]"></i> Experiencia 01 · Memoria Georreferenciada
+          </span>
+          <h1 class="font-display font-black text-2xl sm:text-3xl lg:text-4xl text-[#572c0e]">
+            Mapa Interactivo de Cicatrices y Alivios
+          </h1>
+          <p class="text-sm text-[#964915] leading-relaxed">
+            Explora relatos en primera persona a lo largo del Perú. Haz clic en cada pin para escuchar su testimonio sonoro de 30 segundos o suma tu propia historia al archivo colectivo.
+          </p>
+          <!-- Aviso ético de testimonios ficticios de ejemplo -->
+          <div class="mt-2 inline-flex items-start sm:items-center gap-2 px-3.5 py-2 rounded-2xl bg-[#ffede0] border border-[#964915]/25 text-xs text-[#572c0e]">
+            <i class="fa-solid fa-circle-info text-[#ff5757] mt-0.5 sm:mt-0 flex-shrink-0"></i>
+            <span><strong>Aviso de transparencia:</strong> Todos los pines, nombres y relatos sonoros precargados actualmente son <strong>ejemplos ficticios</strong> creados con fines ilustrativos para esta demo.</span>
+          </div>
+        </div>
+
+        <!-- Filtros + Botón Sumar Pin -->
+        <div class="flex flex-wrap items-center gap-2.5">
+          <button onclick="filterPins('all')" id="filter-all" class="filter-btn px-4 py-2.5 rounded-full font-display font-bold text-xs bg-[#572c0e] text-[#ffede0] transition-all">
+            Todos (<span id="count-all">8</span>)
+          </button>
+          <button onclick="filterPins('terracotta')" id="filter-terracotta" class="filter-btn px-4 py-2.5 rounded-full font-display font-bold text-xs bg-[#ffede0] text-[#964915] border border-[#964915]/30 hover:bg-[#ff5757] hover:text-[#fffaf7] transition-all">
+            <span class="inline-block w-2.5 h-2.5 rounded-full bg-[#ff5757] mr-1.5"></span>Lo que dolió (<span id="count-terracotta">5</span>)
+          </button>
+          <button onclick="filterPins('pink')" id="filter-pink" class="filter-btn px-4 py-2.5 rounded-full font-display font-bold text-xs bg-[#ffede0] text-[#572c0e] border border-[#ff66c4]/40 hover:bg-[#ff66c4] hover:text-[#fffaf7] transition-all">
+            <span class="inline-block w-2.5 h-2.5 rounded-full bg-[#ff66c4] mr-1.5"></span>Lo que sanó (<span id="count-pink">3</span>)
+          </button>
+          <button onclick="openAddPinModal()" class="px-5 py-2.5 rounded-full font-display font-extrabold text-xs bg-[#ff66c4] text-[#fffaf7] hover:bg-[#ff5757] transition-all warm-shadow flex items-center gap-2">
+            <i class="fa-solid fa-plus"></i> Sumar mi pin al mapa
+          </button>
+        </div>
+      </div>
+
+      <!-- Grid Principal: Mapa SVG del Perú + Panel de Audio y Relato -->
+      <div class="grid lg:grid-cols-12 gap-6 items-stretch">
+        
+        <!-- Lienzo del Mapa Ilustrado del Perú (7 columnas) -->
+        <div class="lg:col-span-7 bg-[#fffaf7] rounded-3xl p-5 sm:p-7 border border-[#964915]/20 warm-shadow flex flex-col justify-between relative overflow-hidden">
+          
+          <!-- Barra superior de zoom y leyenda -->
+          <div class="flex flex-wrap items-center justify-between gap-3 mb-3 z-10">
+            <div class="flex items-center gap-4 text-xs font-semibold text-[#572c0e]">
+              <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-[#ff5757] inline-block"></span> Pin Terracota: Negligencia / Demora</span>
+              <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-[#ff66c4] inline-block"></span> Pin Rosa: Alivio / Red</span>
+            </div>
+            <div class="flex items-center gap-1.5 bg-[#ffede0] p-1 rounded-full border border-[#964915]/20">
+              <button onclick="zoomMap(1.2)" class="w-7 h-7 rounded-full bg-[#fffaf7] text-[#572c0e] hover:bg-[#ff66c4] hover:text-[#fffaf7] text-xs font-bold transition-colors" title="Acercar mapa">
+                <i class="fa-solid fa-plus"></i>
+              </button>
+              <button onclick="zoomMap(0.85)" class="w-7 h-7 rounded-full bg-[#fffaf7] text-[#572c0e] hover:bg-[#ff66c4] hover:text-[#fffaf7] text-xs font-bold transition-colors" title="Alejar mapa">
+                <i class="fa-solid fa-minus"></i>
+              </button>
+              <button onclick="resetMapZoom()" class="px-2.5 h-7 rounded-full bg-[#fffaf7] text-[#964915] hover:text-[#572c0e] text-[11px] font-bold transition-colors" title="Restablecer vista">
+                Reset
+              </button>
+            </div>
+          </div>
+
+          <!-- Contenedor SVG del Mapa del Perú -->
+          <div class="relative w-full h-[460px] sm:h-[520px] bg-[#ffede0]/65 rounded-2xl border border-[#964915]/15 overflow-hidden flex items-center justify-center">
+            <svg id="peru-map-svg" viewBox="0 0 500 620" class="w-full h-full max-h-[510px] transition-transform duration-300 ease-out" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <pattern id="warmGrid" width="28" height="28" patternUnits="userSpaceOnUse">
+                  <path d="M 28 0 L 0 0 0 28" fill="none" stroke="#964915" stroke-width="0.4" stroke-opacity="0.16"/>
+                </pattern>
+                <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feGaussianBlur stdDeviation="4" result="blur"/>
+                  <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+                </filter>
+              </defs>
+
+              <!-- Fondo retícula editorial cálida -->
+              <rect width="500" height="620" fill="url(#warmGrid)" />
+
+              <!-- Rosa de los vientos decorativa -->
+              <g transform="translate(65, 535)" opacity="0.65">
+                <circle cx="0" cy="0" r="24" fill="#fffaf7" stroke="#964915" stroke-width="1.2"/>
+                <path d="M0 -18 L4 -4 L18 0 L4 4 L0 18 L-4 4 L-18 0 L-4 -4 Z" fill="#ff66c4"/>
+                <text x="0" y="-28" text-anchor="middle" fill="#572c0e" font-family="Montserrat" font-weight="800" font-size="10">N</text>
+              </g>
+
+              <!-- Grupo con Zoom dinámico -->
+              <g id="map-zoom-group" transform="translate(0,0) scale(1)">
+                <!-- Silueta Artística del Perú dividida por macrorregiones ilustradas -->
+                <!-- Selva Norte / Loreto -->
+                <path d="M165,45 L210,32 L255,48 L302,62 L338,118 L345,175 L312,218 L272,225 L235,195 L195,165 L165,112 Z"
+                      fill="#f7d6bf" stroke="#964915" stroke-width="2" stroke-linejoin="round" />
+                
+                <!-- Costa y Sierra Norte (Piura, Lambayeque, Cajamarca, La Libertad) -->
+                <path d="M72,135 L112,115 L145,95 L165,112 L195,165 L182,222 L145,252 L106,238 L82,195 L66,162 Z"
+                      fill="#fadcc8" stroke="#964915" stroke-width="2" stroke-linejoin="round" />
+
+                <!-- Centro (Áncash, Huánuco, Pasco, Junín, Lima, Ucayali) -->
+                <path d="M145,252 L182,222 L235,195 L272,225 L312,218 L325,285 L295,338 L242,358 L195,368 L158,342 L132,292 Z"
+                      fill="#f5cfb5" stroke="#964915" stroke-width="2" stroke-linejoin="round" />
+
+                <!-- Sur Andino y Amazónico (Cusco, Madre de Dios, Apurímac, Ayacucho, Huancavelica) -->
+                <path d="M195,368 L242,358 L295,338 L368,342 L392,395 L362,448 L305,468 L248,448 L208,415 Z"
+                      fill="#fadcc8" stroke="#964915" stroke-width="2" stroke-linejoin="round" />
+
+                <!-- Costa y Sierra Sur (Ica, Arequipa, Moquegua, Tacna, Puno) -->
+                <path d="M158,342 L195,368 L208,415 L248,448 L305,468 L362,448 L378,492 L352,556 L318,578 L278,548 L225,505 L175,445 L154,395 Z"
+                      fill="#f7d6bf" stroke="#964915" stroke-width="2" stroke-linejoin="round" />
+
+                <!-- Etiquetas geográficas sutiles -->
+                <text x="255" y="130" fill="#964915" opacity="0.55" font-family="Montserrat" font-weight="700" font-size="11" text-anchor="middle">LORETO</text>
+                <text x="108" y="172" fill="#964915" opacity="0.55" font-family="Montserrat" font-weight="700" font-size="10" text-anchor="middle">PIURA</text>
+                <text x="135" y="232" fill="#964915" opacity="0.55" font-family="Montserrat" font-weight="700" font-size="10" text-anchor="middle">LA LIBERTAD</text>
+                <text x="165" y="328" fill="#964915" opacity="0.65" font-family="Montserrat" font-weight="800" font-size="11" text-anchor="middle">LIMA</text>
+                <text x="235" y="318" fill="#964915" opacity="0.55" font-family="Montserrat" font-weight="700" font-size="10" text-anchor="middle">JUNÍN</text>
+                <text x="305" y="408" fill="#964915" opacity="0.6" font-family="Montserrat" font-weight="700" font-size="11" text-anchor="middle">CUSCO</text>
+                <text x="262" y="495" fill="#964915" opacity="0.6" font-family="Montserrat" font-weight="700" font-size="11" text-anchor="middle">AREQUIPA</text>
+
+                <!-- Capa donde se renderizan dinámicamente los pines -->
+                <g id="pins-layer"></g>
+              </g>
+            </svg>
+
+            <!-- Etiqueta flotante inferior en el mapa -->
+            <div class="absolute bottom-3 right-3 bg-[#fffaf7]/90 backdrop-blur-sm px-3 py-1.5 rounded-xl border border-[#964915]/20 text-[11px] font-medium text-[#964915]">
+              <i class="fa-solid fa-hand-pointer text-[#ff66c4] mr-1"></i> Toca un pin para abrir su archivo sonoro
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel Derecho: Ficha Narrativa + Reproductor Sonoro de 30s (5 columnas) -->
+        <div class="lg:col-span-5 flex flex-col justify-between bg-[#fffaf7] rounded-3xl p-6 sm:p-8 border-2 border-[#ff66c4]/35 warm-shadow-lg">
+          <div id="story-card-content" class="space-y-5">
+            <!-- Badge dinámico -->
+            <div class="flex items-center justify-between gap-2 flex-wrap">
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <span id="pin-type-badge" class="px-3.5 py-1 rounded-full bg-[#ff5757]/15 text-[#ff5757] font-display font-extrabold text-xs uppercase tracking-wider">
+                  Pin Terracota · Lo que dolió
+                </span>
+                <span id="pin-fiction-badge" class="px-2.5 py-1 rounded-full bg-[#964915]/10 text-[#964915] font-display font-bold text-[10px] uppercase tracking-wider border border-[#964915]/20">
+                  Ejemplo ficticio
+                </span>
+              </div>
+              <span id="pin-wait-badge" class="px-3 py-1 rounded-full bg-[#ffede0] text-[#572c0e] font-display font-bold text-xs border border-[#964915]/20">
+                <i class="fa-regular fa-clock text-[#ff5757] mr-1"></i> 8 años para diagnóstico
+              </span>
+            </div>
+
+            <!-- Región y protagonista -->
+            <div>
+              <p id="pin-region" class="text-xs font-display font-bold uppercase tracking-widest text-[#964915]">
+                <i class="fa-solid fa-location-dot text-[#ff5757] mr-1"></i> Lima Metropolitana · Hospital Público
+              </p>
+              <h2 id="pin-title" class="font-display font-black text-xl sm:text-2xl text-[#572c0e] mt-1">
+                «Me dijeron que llorar de dolor cada mes era parte de crecer»
+              </h2>
+            </div>
+
+            <!-- Cita textual -->
+            <div id="pin-quote-box" class="p-4 sm:p-5 rounded-2xl bg-[#ffede0]/80 border-l-4 border-[#ff5757] text-sm text-[#572c0e] italic leading-relaxed">
+              "Tenía 17 años cuando me desmayé en el colegio por un cólico. En emergencia me pusieron un analgésico en la vena y me mandaron a casa sin una sola ecografía. Ocho años después confirmaron endometriosis profunda."
+            </div>
+
+            <!-- REPRODUCTOR DE AUDIO SIMULADO DE 30 SEGUNDOS -->
+            <div class="p-5 rounded-2xl bg-[#ffede0] border border-[#964915]/25 space-y-4">
+              <div class="flex items-center justify-between gap-2 flex-wrap">
+                <span class="text-[11px] font-display font-extrabold uppercase tracking-wider text-[#964915]">
+                  <i class="fa-solid fa-wave-square text-[#ff66c4] mr-1.5"></i> Cápsula Sonora · 30s <span id="audio-fiction-note" class="font-normal normal-case">(Recreación ficticia)</span>
+                </span>
+                <span id="audio-time-display" class="text-xs font-display font-bold text-[#572c0e]">00:00 / 00:30</span>
+              </div>
+
+              <!-- Controles y ecualizador -->
+              <div class="flex items-center gap-4">
+                <button id="pin-play-btn" onclick="togglePinAudio()" class="w-12 h-12 rounded-full bg-[#ff5757] hover:bg-[#ff66c4] text-[#fffaf7] flex items-center justify-center text-base transition-all warm-shadow flex-shrink-0 focus:outline-none">
+                  <i id="pin-play-icon" class="fa-solid fa-play ml-0.5"></i>
+                </button>
+
+                <div class="flex-grow space-y-2">
+                  <!-- Barras de ecualizador -->
+                  <div id="eq-visualizer" class="flex items-end gap-1.5 h-6">
+                    <span class="eq-bar w-1.5 h-2 bg-[#ff66c4] rounded-full"></span>
+                    <span class="eq-bar w-1.5 h-3 bg-[#ff5757] rounded-full"></span>
+                    <span class="eq-bar w-1.5 h-2 bg-[#964915] rounded-full"></span>
+                    <span class="eq-bar w-1.5 h-4 bg-[#ff66c4] rounded-full"></span>
+                    <span class="eq-bar w-1.5 h-2 bg-[#ff5757] rounded-full"></span>
+                    <span class="eq-bar w-1.5 h-3 bg-[#964915] rounded-full"></span>
+                    <span id="audio-status-text" class="text-xs font-semibold text-[#964915] ml-2">Pulsa play para escuchar el testimonio</span>
+                  </div>
+
+                  <!-- Barra de progreso -->
+                  <div class="w-full h-2 bg-[#fffaf7] rounded-full overflow-hidden border border-[#964915]/15">
+                    <div id="pin-audio-progress" class="h-full bg-gradient-to-r from-[#ff66c4] to-[#ff5757] w-0 transition-all duration-200"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Transcripción sincronizada -->
+              <div class="p-3 rounded-xl bg-[#fffaf7] border border-[#964915]/15">
+                <span class="block text-[10px] font-display font-bold uppercase tracking-wider text-[#964915] mb-1">Transcripción en vivo:</span>
+                <p id="pin-transcript" class="text-xs text-[#572c0e] font-medium leading-relaxed">
+                  "Cuando escuchas tantas veces que exageras, terminas dudando de tu propio cuerpo..."
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pie de la ficha con autoría y navegación rápida entre pines -->
+          <div class="pt-5 mt-5 border-t border-[#964915]/15 flex items-center justify-between text-xs">
+            <span id="pin-author" class="font-bold text-[#964915]">— Valeria, 25 años</span>
+            <div class="flex items-center gap-2">
+              <button onclick="cyclePin(-1)" class="px-3 py-1.5 rounded-full bg-[#ffede0] text-[#572c0e] hover:bg-[#ff66c4] hover:text-[#fffaf7] font-bold transition-colors">
+                <i class="fa-solid fa-chevron-left"></i> Anterior
+              </button>
+              <button onclick="cyclePin(1)" class="px-3 py-1.5 rounded-full bg-[#ffede0] text-[#572c0e] hover:bg-[#ff66c4] hover:text-[#fffaf7] font-bold transition-colors">
+                Siguiente <i class="fa-solid fa-chevron-right"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         EXPERIENCIA 2: EN SUS ZAPATOS — 10 AÑOS PARA UN DIAGNÓSTICO
+    ====================================================================== -->
+    <section id="exp-zapatos" class="tab-panel hidden space-y-6">
+      
+      <!-- Encabezado y medidores de estado -->
+      <div class="bg-[#fffaf7] rounded-3xl p-6 sm:p-8 border border-[#964915]/20 warm-shadow">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-6 border-b border-[#964915]/15">
+          <div class="max-w-2xl space-y-2">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#ff5757]/15 text-[#ff5757] font-display font-bold text-[11px] uppercase tracking-wider">
+              <i class="fa-solid fa-shoe-prints"></i> Experiencia 02 · Ficción Periodística Interactiva
+            </span>
+            <h1 class="font-display font-black text-2xl sm:text-3xl lg:text-4xl text-[#572c0e]">
+              En sus zapatos: 10 años para un diagnóstico
+            </h1>
+            <p class="text-sm text-[#964915]">
+              Tienes 19 años y empiezas con dolor menstrual incapacitante. Toma decisiones reales en consulta, estudios y economía para descubrir cuánto tarda obtener respuestas.
+            </p>
+          </div>
+
+          <button onclick="resetShoesGame()" class="self-start lg:self-center px-4 py-2.5 rounded-full bg-[#ffede0] text-[#572c0e] hover:bg-[#ff66c4] hover:text-[#fffaf7] font-display font-bold text-xs border border-[#964915]/20 transition-all">
+            <i class="fa-solid fa-rotate-right mr-1.5"></i> Reiniciar historia
+          </button>
+        </div>
+
+        <!-- Barra de Métricas Acumuladas en Tiempo Real -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6">
+          <div class="p-4 rounded-2xl bg-[#ffede0] border border-[#964915]/15 flex items-center gap-3.5">
+            <div class="w-11 h-11 rounded-2xl bg-[#ff5757] text-[#fffaf7] flex items-center justify-center text-lg flex-shrink-0">
+              <i class="fa-regular fa-hourglass-half"></i>
+            </div>
+            <div>
+              <span class="block text-[11px] font-display font-bold uppercase text-[#964915]">Tiempo transcurrido</span>
+              <span id="shoes-stat-time" class="font-display font-black text-xl text-[#572c0e]">0 años, 2 meses</span>
+            </div>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-[#ffede0] border border-[#964915]/15 flex items-center gap-3.5">
+            <div class="w-11 h-11 rounded-2xl bg-[#964915] text-[#fffaf7] flex items-center justify-center text-lg flex-shrink-0">
+              <i class="fa-solid fa-wallet"></i>
+            </div>
+            <div>
+              <span class="block text-[11px] font-display font-bold uppercase text-[#964915]">Gasto acumulado</span>
+              <span id="shoes-stat-cost" class="font-display font-black text-xl text-[#572c0e]">S/ 180</span>
+            </div>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-[#ffede0] border border-[#964915]/15 flex items-center gap-3.5">
+            <div class="w-11 h-11 rounded-2xl bg-[#ff66c4] text-[#fffaf7] flex items-center justify-center text-lg flex-shrink-0">
+              <i class="fa-solid fa-heart-pulse"></i>
+            </div>
+            <div class="w-full">
+              <div class="flex justify-between items-center mb-1">
+                <span class="text-[11px] font-display font-bold uppercase text-[#964915]">Desgaste emocional</span>
+                <span id="shoes-stat-wear-label" class="font-display font-extrabold text-xs text-[#ff5757]">20%</span>
+              </div>
+              <div class="w-full h-2.5 bg-[#fffaf7] rounded-full overflow-hidden border border-[#964915]/15">
+                <div id="shoes-stat-wear-bar" class="h-full bg-[#ff5757] transition-all duration-500" style="width: 20%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contenedor Dinámico de la Escena o Resultado Final -->
+      <div id="shoes-stage-container" class="bg-[#fffaf7] rounded-3xl p-6 sm:p-10 border-2 border-[#ff66c4]/30 warm-shadow-lg">
+        <!-- Se inyecta vía JavaScript -->
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         EXPERIENCIA 3: HABITAR(SE) EN VIVO (CABINA DE ESCUCHA & MURAL)
+    ====================================================================== -->
+    <section id="exp-cabina" class="tab-panel hidden space-y-8">
+      
+      <!-- Encabezado -->
+      <div class="bg-[#fffaf7] rounded-3xl p-6 sm:p-8 border border-[#964915]/20 warm-shadow">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#964915]/15 text-[#964915] font-display font-bold text-[11px] uppercase tracking-wider mb-2">
+          <i class="fa-solid fa-building-columns"></i> Experiencia 03 · Instalación Física Itinerante
+        </span>
+        <h1 class="font-display font-black text-2xl sm:text-3xl lg:text-4xl text-[#572c0e]">
+          Habitar(se) en vivo: Cabina de Escucha y Mural Colectivo
+        </h1>
+        <p class="text-sm text-[#964915] max-w-3xl mt-2 leading-relaxed">
+          Previsualización digital de la instalación itinerante para calles y universidades: un espacio íntimo con estética de sala cálida (cero estética hospitalaria) para escuchar relatos y transformar frases que nos marcaron.
+        </p>
+        <div class="mt-3 inline-flex items-start sm:items-center gap-2 px-3.5 py-2 rounded-2xl bg-[#ffede0] border border-[#964915]/25 text-xs text-[#572c0e]">
+          <i class="fa-solid fa-circle-info text-[#ff66c4] mt-0.5 sm:mt-0 flex-shrink-0"></i>
+          <span><strong>Nota de demostración:</strong> Los testimonios precargados en la cabina y las notas iniciales del mural son <strong>relatos ficticios de ejemplo</strong> inspirados en problemáticas reales.</span>
+        </div>
+      </div>
+
+      <!-- Bloque A: Simulador de La Cabina de Escucha -->
+      <div class="grid lg:grid-cols-12 gap-6 items-center bg-[#fffaf7] rounded-3xl p-6 sm:p-8 border-2 border-[#ff66c4]/30 warm-shadow-lg">
+        
+        <!-- Ilustración vectorial interactiva de la Cabina -->
+        <div class="lg:col-span-6 bg-[#ffede0] rounded-2xl p-6 border border-[#964915]/20 flex flex-col items-center justify-center relative overflow-hidden">
+          <svg viewBox="0 0 420 270" class="w-full max-w-md h-auto" xmlns="http://www.w3.org/2000/svg">
+            <!-- Estructura de cabina cálida de madera terracota -->
+            <rect x="45" y="20" width="330" height="230" rx="28" fill="#fffaf7" stroke="#964915" stroke-width="4"/>
+            <!-- Cortina rosa cálida izquierda -->
+            <path d="M47 45 Q85 130 62 248 L47 248 Z" fill="#ff66c4" opacity="0.85"/>
+            <!-- Cortina coral derecha -->
+            <path d="M373 45 Q335 130 358 248 L373 248 Z" fill="#ff5757" opacity="0.85"/>
+            <!-- Lámpara colgante cálida -->
+            <line x1="210" y1="20" x2="210" y2="55" stroke="#572c0e" stroke-width="3"/>
+            <path d="M180 75 Q210 45 240 75 Z" fill="#ff66c4"/>
+            <ellipse id="cabin-lamp-glow" cx="210" cy="115" rx="95" ry="55" fill="#ff66c4" opacity="0.12"/>
+            <!-- Sillón cómodo -->
+            <rect x="135" y="155" width="150" height="58" rx="18" fill="#f5cfb5" stroke="#964915" stroke-width="2.5"/>
+            <rect x="122" y="170" width="22" height="45" rx="10" fill="#964915"/>
+            <rect x="276" y="170" width="22" height="45" rx="10" fill="#964915"/>
+            <!-- Cojín rosa -->
+            <rect x="155" y="142" width="44" height="32" rx="10" fill="#ff66c4"/>
+            <!-- Audífonos colgando -->
+            <path d="M192 108 A18 18 0 0 1 228 108" fill="none" stroke="#572c0e" stroke-width="4" stroke-linecap="round"/>
+            <rect x="185" y="105" width="10" height="18" rx="5" fill="#ff5757"/>
+            <rect x="225" y="105" width="10" height="18" rx="5" fill="#ff5757"/>
+            <!-- Letrero superior de la cabina -->
+            <rect x="120" y="10" width="180" height="24" rx="12" fill="#572c0e"/>
+            <text x="210" y="26" text-anchor="middle" fill="#ffede0" font-family="Montserrat" font-weight="800" font-size="11">CABINA HABITAR(SE)</text>
+          </svg>
+          <span class="text-[11px] font-semibold text-[#964915] mt-2 text-center">
+            Diseño espacial: luz cálida, cortinas textiles y micrófono analógico de grabación libre.
+          </span>
+        </div>
+
+        <!-- Controles interactivos de la Cabina -->
+        <div class="lg:col-span-6 space-y-5">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#ff66c4]/15 text-[#572c0e] font-display font-bold text-xs">
+            <i class="fa-solid fa-headphones text-[#ff66c4]"></i> Simulador de Experiencia Inmersiva
+          </div>
+          <h2 class="font-display font-black text-2xl text-[#572c0e]">
+            Ponte los audífonos y escucha voces de tu ciudad
+          </h2>
+          <p class="text-sm text-[#964915] leading-relaxed">
+            Al ingresar a la cabina universitaria, el ruido exterior desaparece y se activan fragmentos íntimos grabados por otras estudiantes y vecinas.
+          </p>
+
+          <!-- Botón de ponerse audífonos -->
+          <div class="flex flex-wrap items-center gap-3">
+            <button id="cabin-listen-btn" onclick="toggleCabinExperience()" class="px-6 py-3.5 rounded-full bg-[#ff66c4] hover:bg-[#ff5757] text-[#fffaf7] font-display font-extrabold text-sm transition-all warm-shadow flex items-center gap-2.5">
+              <i id="cabin-btn-icon" class="fa-solid fa-headphones"></i>
+              <span id="cabin-btn-text">Ponerse los audífonos</span>
+            </button>
+            <button onclick="nextCabinVoice()" class="px-4 py-3.5 rounded-full bg-[#ffede0] text-[#572c0e] hover:border-[#ff66c4] border border-[#964915]/25 font-display font-bold text-xs transition-all">
+              Cambiar voz <i class="fa-solid fa-forward-step ml-1"></i>
+            </button>
+          </div>
+
+          <!-- Visor de voz activa en cabina -->
+          <div id="cabin-voice-box" class="p-5 rounded-2xl bg-[#ffede0] border-2 border-dashed border-[#964915]/30 space-y-2 transition-all">
+            <div class="flex items-center justify-between text-xs font-display font-bold text-[#964915] gap-2 flex-wrap">
+              <span id="cabin-voice-tag">Archivo Universitario #01 · Lima (Ejemplo ficticio)</span>
+              <span id="cabin-live-indicator" class="text-[#964915]">En espera</span>
+            </div>
+            <p id="cabin-voice-quote" class="text-sm sm:text-base font-medium text-[#572c0e] italic leading-relaxed">
+              "Pensé que era la única que faltaba a clases por los vómitos del primer día de regla. Escuchar a otras chicas aquí me quitó un peso enorme de encima."
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bloque B: Mural Colectivo Interactivo -->
+      <div class="bg-[#fffaf7] rounded-3xl p-6 sm:p-8 border border-[#964915]/20 warm-shadow space-y-6">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-[#964915]/15 pb-5">
+          <div>
+            <span class="text-xs font-display font-extrabold uppercase tracking-wider text-[#ff5757]">Lienzo Participativo en Vivo</span>
+            <h2 class="font-display font-black text-2xl text-[#572c0e] mt-1">
+              Mural Colectivo: De la consulta al autocuidado
+            </h2>
+            <p class="text-xs sm:text-sm text-[#964915] mt-1">
+              Contrastamos las frases que minimizaron nuestro cuerpo en consulta con las respuestas que hoy nos damos a nosotras mismas. <span class="font-semibold text-[#572c0e]">(Las 3 notas iniciales son ejemplos ficticios de muestra).</span>
+            </p>
+          </div>
+        </div>
+
+        <!-- Formulario rápido para pegar una nota en vivo en el mural -->
+        <form id="mural-form" onsubmit="addMuralNote(event)" class="grid md:grid-cols-12 gap-3 bg-[#ffede0] p-4 sm:p-5 rounded-2xl border border-[#964915]/20">
+          <div class="md:col-span-5">
+            <label for="mural-heard" class="block text-[11px] font-display font-bold uppercase text-[#964915] mb-1">
+              Lo que me dijeron en consulta:
+            </label>
+            <input type="text" id="mural-heard" required maxlength="110" placeholder="Ej. «Es normal que duela, tómate un paracetamol»"
+                   class="w-full px-3.5 py-2.5 rounded-xl bg-[#fffaf7] border border-[#964915]/25 text-xs sm:text-sm text-[#572c0e] focus:outline-none focus:border-[#ff5757]" />
+          </div>
+          <div class="md:col-span-5">
+            <label for="mural-reply" class="block text-[11px] font-display font-bold uppercase text-[#ff66c4] mb-1">
+              Lo que hoy me digo a mí misma:
+            </label>
+            <input type="text" id="mural-reply" required maxlength="120" placeholder="Ej. «Mi dolor merece investigación real, no parches»"
+                   class="w-full px-3.5 py-2.5 rounded-xl bg-[#fffaf7] border border-[#ff66c4]/40 text-xs sm:text-sm text-[#572c0e] focus:outline-none focus:border-[#ff66c4]" />
+          </div>
+          <div class="md:col-span-2 flex items-end">
+            <button type="submit" class="w-full py-2.5 px-4 rounded-xl bg-[#ff5757] hover:bg-[#ff66c4] text-[#fffaf7] font-display font-extrabold text-xs sm:text-sm transition-all warm-shadow">
+              <i class="fa-solid fa-note-sticky mr-1"></i> Pegar nota
+            </button>
+          </div>
+        </form>
+
+        <!-- Grid de Notas Adhesivas Cálidas -->
+        <div id="mural-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 pt-2">
+          <!-- Se renderizan dinámicamente desde JS -->
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- MODAL PARA SUMAR PIN AL MAPA EN VIVO -->
+  <div id="add-pin-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-[#572c0e]/60 backdrop-blur-sm">
+    <div class="bg-[#fffaf7] rounded-3xl max-w-lg w-full p-6 sm:p-8 border-2 border-[#ff66c4] warm-shadow-lg space-y-5 relative animate-[fadeSlideUp_0.25s_ease]">
+      <button onclick="closeAddPinModal()" class="absolute top-5 right-5 w-9 h-9 rounded-full bg-[#ffede0] text-[#572c0e] hover:bg-[#ff5757] hover:text-[#fffaf7] flex items-center justify-center transition-colors">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div>
+        <span class="px-3 py-1 rounded-full bg-[#ff66c4]/15 text-[#964915] font-display font-bold text-[11px] uppercase tracking-wider">
+          Archivo Colectivo en Vivo
+        </span>
+        <h3 class="font-display font-black text-2xl text-[#572c0e] mt-1.5">
+          Sumar mi pin al mapa
+        </h3>
+        <p class="text-xs text-[#964915] mt-1">
+          Tu historia aparecerá inmediatamente en el mapa del Perú como parte de esta demostración participativa.
+        </p>
+      </div>
+
+      <form id="new-pin-form" onsubmit="submitNewPin(event)" class="space-y-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          <div>
+            <label for="new-pin-region" class="block text-xs font-display font-bold text-[#572c0e] mb-1">Región / Ciudad</label>
+            <select id="new-pin-region" required class="w-full px-3.5 py-2.5 rounded-xl bg-[#ffede0] border border-[#964915]/25 text-xs sm:text-sm text-[#572c0e] font-medium focus:outline-none focus:border-[#ff66c4]">
+              <option value="Lima">Lima</option>
+              <option value="Cusco">Cusco</option>
+              <option value="Arequipa">Arequipa</option>
+              <option value="Trujillo">Trujillo (La Libertad)</option>
+              <option value="Piura">Piura</option>
+              <option value="Iquitos">Iquitos (Loreto)</option>
+              <option value="Huancayo">Huancayo (Junín)</option>
+              <option value="Cañete">Cañete</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="new-pin-type" class="block text-xs font-display font-bold text-[#572c0e] mb-1">Tipo de memoria</label>
+            <select id="new-pin-type" required class="w-full px-3.5 py-2.5 rounded-xl bg-[#ffede0] border border-[#964915]/25 text-xs sm:text-sm text-[#572c0e] font-medium focus:outline-none focus:border-[#ff66c4]">
+              <option value="terracotta">Pin Terracota: Lo que dolió</option>
+              <option value="pink">Pin Rosa: Lo que sanó</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          <div>
+            <label for="new-pin-author" class="block text-xs font-display font-bold text-[#572c0e] mb-1">Alias y edad (Opcional)</label>
+            <input type="text" id="new-pin-author" placeholder="Ej. Anónima, 23 años" class="w-full px-3.5 py-2.5 rounded-xl bg-[#ffede0] border border-[#964915]/25 text-xs sm:text-sm text-[#572c0e] focus:outline-none focus:border-[#ff66c4]" />
+          </div>
+          <div>
+            <label for="new-pin-years" class="block text-xs font-display font-bold text-[#572c0e] mb-1">Tiempo / Etiqueta</label>
+            <input type="text" id="new-pin-years" required placeholder="Ej. 6 años de espera / Red de apoyo" class="w-full px-3.5 py-2.5 rounded-xl bg-[#ffede0] border border-[#964915]/25 text-xs sm:text-sm text-[#572c0e] focus:outline-none focus:border-[#ff66c4]" />
+          </div>
+        </div>
+
+        <div>
+          <label for="new-pin-title" class="block text-xs font-display font-bold text-[#572c0e] mb-1">Frase titular de tu historia</label>
+          <input type="text" id="new-pin-title" required maxlength="85" placeholder="Ej. «Encontrar una doctora que me escuchó cambió mi vida»" class="w-full px-3.5 py-2.5 rounded-xl bg-[#ffede0] border border-[#964915]/25 text-xs sm:text-sm text-[#572c0e] focus:outline-none focus:border-[#ff66c4]" />
+        </div>
+
+        <div>
+          <label for="new-pin-story" class="block text-xs font-display font-bold text-[#572c0e] mb-1">Relato breve</label>
+          <textarea id="new-pin-story" rows="3" required maxlength="280" placeholder="Comparte tu experiencia en consulta o aquello que te ayudó a sanar..." class="w-full px-3.5 py-2.5 rounded-xl bg-[#ffede0] border border-[#964915]/25 text-xs sm:text-sm text-[#572c0e] focus:outline-none focus:border-[#ff66c4]"></textarea>
+        </div>
+
+        <div class="flex items-center justify-end gap-3 pt-2">
+          <button type="button" onclick="closeAddPinModal()" class="px-5 py-2.5 rounded-full bg-[#ffede0] text-[#964915] font-display font-bold text-xs">
+            Cancelar
+          </button>
+          <button type="submit" class="px-6 py-2.5 rounded-full bg-[#ff66c4] hover:bg-[#ff5757] text-[#fffaf7] font-display font-extrabold text-xs transition-all warm-shadow">
+            <i class="fa-solid fa-map-pin mr-1.5"></i> Colocar pin en el mapa
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- FOOTER CÁLIDO SIN NEGRO -->
+  <footer class="bg-[#572c0e] text-[#ffede0] mt-12 border-t-4 border-[#ff66c4]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
+      <div class="flex items-center gap-3">
+        <span class="font-display font-black text-lg text-[#ff66c4]">habitar(se)</span>
+        <span class="text-[#ffede0]/80">· La Cartografía del Dolor Invisible (Prototipo Funcional 2026)</span>
+      </div>
+      <div class="text-[#ffede0]/80 text-center sm:text-right">
+        Proyecto transmedia de <strong>Carolina García Colque</strong> · <span class="text-[#ff66c4] font-bold">@habitars3</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- LÓGICA INTERACTIVA + SINTETIZADOR WEB AUDIO API -->
+  <script>
+    /* =========================================================================
+       1. SISTEMA DE AUDIO SINTETIZADO (WEB AUDIO API - SIN ARCHIVOS EXTERNOS)
+    ========================================================================= */
+    let audioCtx = null;
+    let masterSoundOn = true;
+    let ambientInterval = null;
+    let pinProgressInterval = null;
+    let isPinPlaying = false;
+    let pinSeconds = 0;
+
+    function ensureAudioContext() {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContextClass();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function toggleMasterAudio() {
+      masterSoundOn = !masterSoundOn;
+      const icon = document.getElementById('audio-master-icon');
+      const label = document.getElementById('audio-master-label');
+      if (masterSoundOn) {
+        icon.className = 'fa-solid fa-volume-high text-[#ff5757]';
+        label.textContent = 'Sonido activo';
+        playFX('click');
+      } else {
+        icon.className = 'fa-solid fa-volume-xmark text-[#964915]';
+        label.textContent = 'Silenciado';
+        stopAllAmbient();
+      }
+    }
+
+    function playFX(type) {
+      if (!masterSoundOn) return;
+      ensureAudioContext();
+      const now = audioCtx.currentTime;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      if (type === 'click') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(520, now);
+        osc.frequency.exponentialRampToValueAtTime(780, now + 0.06);
+        gain.gain.setValueAtTime(0.09, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+        osc.start(now);
+        osc.stop(now + 0.06);
+      } else if (type === 'pin') {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(360, now);
+        osc.frequency.exponentialRampToValueAtTime(720, now + 0.16);
+        gain.gain.setValueAtTime(0.14, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
+        osc.start(now);
+        osc.stop(now + 0.16);
+      } else if (type === 'decision') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(290, now);
+        osc.frequency.exponentialRampToValueAtTime(440, now + 0.14);
+        gain.gain.setValueAtTime(0.12, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
+        osc.start(now);
+        osc.stop(now + 0.14);
+      } else if (type === 'chime') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(587.33, now); // D5
+        osc.frequency.setValueAtTime(880, now + 0.12); // A5
+        gain.gain.setValueAtTime(0.12, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+        osc.start(now);
+        osc.stop(now + 0.35);
+      }
+    }
+
+    // Genera un latido cálido y atmósfera íntima mientras se escucha un testimonio
+    function startAmbientPulse(mode = 'terracotta') {
+      stopAmbientSoundOnly();
+      if (!masterSoundOn) return;
+      ensureAudioContext();
+
+      const triggerBeat = () => {
+        if (!masterSoundOn || !audioCtx) return;
+        const now = audioCtx.currentTime;
+
+        // Latido suave grave
+        const osc1 = audioCtx.createOscillator();
+        const gain1 = audioCtx.createGain();
+        osc1.type = 'sine';
+        osc1.frequency.setValueAtTime(mode === 'pink' ? 110 : 82, now);
+        osc1.frequency.exponentialRampToValueAtTime(48, now + 0.22);
+        gain1.gain.setValueAtTime(0.16, now);
+        gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.24);
+        osc1.connect(gain1);
+        gain1.connect(audioCtx.destination);
+        osc1.start(now);
+        osc1.stop(now + 0.25);
+
+        // Acorde armónico sutil
+        const osc2 = audioCtx.createOscillator();
+        const gain2 = audioCtx.createGain();
+        osc2.type = 'triangle';
+        osc2.frequency.setValueAtTime(mode === 'pink' ? 329.63 : 261.63, now + 0.18);
+        gain2.gain.setValueAtTime(0.045, now + 0.18);
+        gain2.gain.exponentialRampToValueAtTime(0.001, now + 1.1);
+        osc2.connect(gain2);
+        gain2.connect(audioCtx.destination);
+        osc2.start(now + 0.18);
+        osc2.stop(now + 1.15);
+      };
+
+      triggerBeat();
+      ambientInterval = setInterval(triggerBeat, 1400);
+    }
+
+    function stopAmbientSoundOnly() {
+      if (ambientInterval) {
+        clearInterval(ambientInterval);
+        ambientInterval = null;
+      }
+    }
+
+    function stopAllAmbient() {
+      stopAmbientSoundOnly();
+      if (isPinPlaying) {
+        isPinPlaying = false;
+        clearInterval(pinProgressInterval);
+        document.getElementById('pin-play-icon').className = 'fa-solid fa-play ml-0.5';
+        document.getElementById('eq-visualizer').classList.remove('eq-active');
+      }
+      if (isCabinActive) {
+        isCabinActive = false;
+        updateCabinUI();
+      }
+    }
+
+    /* =========================================================================
+       2. NAVEGACIÓN ENTRE EXPERIENCIAS
+    ========================================================================= */
+    function switchExperience(tabName) {
+      playFX('click');
+      stopAllAmbient();
+
+      const tabs = ['mapa', 'zapatos', 'cabina'];
+      tabs.forEach(t => {
+        const panel = document.getElementById(`exp-${t}`);
+        const btn = document.getElementById(`nav-tab-${t}`);
+        if (t === tabName) {
+          panel.classList.remove('hidden');
+          btn.className = 'nav-pill px-3.5 sm:px-4 py-2 rounded-full font-display font-bold text-xs sm:text-sm bg-[#ff66c4] text-[#fffaf7] transition-all whitespace-nowrap';
+        } else {
+          panel.classList.add('hidden');
+          btn.className = 'nav-pill px-3.5 sm:px-4 py-2 rounded-full font-display font-bold text-xs sm:text-sm text-[#572c0e] hover:bg-[#ffede0] transition-all whitespace-nowrap';
+        }
+      });
+    }
+
+    /* =========================================================================
+       3. EXPERIENCIA 1: MAPA INTERACTIVO DEL PERÚ (CICATRICES Y ALIVIOS)
+    ========================================================================= */
+    const regionCoords = {
+      'Piura': { x: 96, y: 152 },
+      'Trujillo': { x: 132, y: 215 },
+      'Iquitos': { x: 265, y: 105 },
+      'Lima': { x: 162, y: 312 },
+      'Cañete': { x: 174, y: 344 },
+      'Huancayo': { x: 226, y: 304 },
+      'Cusco': { x: 295, y: 392 },
+      'Arequipa': { x: 254, y: 476 }
+    };
+
+    let mapPins = [
+      {
+        id: 1,
+        isFictional: true,
+        region: 'Lima',
+        locationDetail: 'Lima Metropolitana · Hospital Público',
+        type: 'terracotta',
+        waitLabel: '8 años para diagnóstico',
+        title: '«Me dijeron que llorar de dolor cada mes era parte de crecer»',
+        quote: '"Tenía 17 años cuando me desmayé en el colegio por un cólico. En emergencia me pusieron un analgésico en la vena y me mandaron a casa sin una sola ecografía. Ocho años después confirmaron endometriosis profunda."',
+        transcripts: [
+          '00:00 — "Tenía 17 años cuando me desmayé en el colegio por un cólico..."',
+          '00:10 — "En emergencia solo me dijeron que era estrés por los exámenes..."',
+          '00:20 — "Ocho años después, una ecografía de mapeo confirmó endometriosis."'
+        ],
+        author: '— Valeria, 25 años (Testimonio ficticio de ejemplo)',
+        x: 162, y: 312
+      },
+      {
+        id: 2,
+        isFictional: true,
+        region: 'Cusco',
+        locationDetail: 'Cusco · Red de Acompañamiento',
+        type: 'pink',
+        waitLabel: 'Red de amigas y alivio',
+        title: '«Crear un círculo de escucha en la universidad me devolvió la calma»',
+        quote: '"Durante años cargué en silencio con el miedo de tener SOP mal diagnosticado. Cuando compartí mi experiencia con otras compañeras en Cusco, encontramos juntas una endocrinóloga empática."',
+        transcripts: [
+          '00:00 — "Pensé que tenía que resolver mis síntomas hormonales completamente sola..."',
+          '00:10 — "Al hablarlo con mis amigas descubrí que tres pasaban por lo mismo..."',
+          '00:20 — "Hoy llevamos nuestro registro del ciclo juntas antes de ir a consulta."'
+        ],
+        author: '— Camila, 23 años (Testimonio ficticio de ejemplo)',
+        x: 295, y: 392
+      },
+      {
+        id: 3,
+        isFictional: true,
+        region: 'Arequipa',
+        locationDetail: 'Arequipa · Consulta Ginecológica',
+        type: 'terracotta',
+        waitLabel: '7 años para diagnóstico',
+        title: '«Me recetaron anticonceptivos a los 16 sin hacerme ni un análisis»',
+        quote: '"Fui por irregularidad y dolor pélvico severo. Sin pedirme perfil hormonal ni ecografía me dieron pastillas para "regular". Cuando las dejé siete años más tarde, el dolor volvió multiplicado."',
+        transcripts: [
+          '00:00 — "A los 16 años me dieron pastillas anticonceptivas como única respuesta..."',
+          '00:10 — "Nadie investigó la causa real de mi dolor ni de mi fatiga..."',
+          '00:20 — "Tardé siete años en exigir estudios hormonales completos."'
+        ],
+        author: '— Sofía, 24 años (Testimonio ficticio de ejemplo)',
+        x: 254, y: 476
+      },
+      {
+        id: 4,
+        isFictional: true,
+        region: 'Trujillo',
+        locationDetail: 'Trujillo, La Libertad · Posta Médica',
+        type: 'terracotta',
+        waitLabel: '5 años para diagnóstico',
+        title: '«Confundieron mis crisis digestivas menstruales con gastritis»',
+        quote: '"Cada mes terminaba en guardia con náuseas y dolor pélvico irradiado. Me dieron omeprazol durante cinco años hasta que entendí que mis síntomas seguían exactamente mi ciclo menstrual."',
+        transcripts: [
+          '00:00 — "Durante cinco años trataron mi dolor como si fuera solo gastritis..."',
+          '00:10 — "Nadie me preguntó nunca en qué día de mi ciclo ocurrían las crisis..."',
+          '00:20 — "Anotar mis síntomas mes a mes fue la clave para que me creyeran."'
+        ],
+        author: '— Mariana, 27 años (Testimonio ficticio de ejemplo)',
+        x: 132, y: 215
+      },
+      {
+        id: 5,
+        isFictional: true,
+        region: 'Huancayo',
+        locationDetail: 'Huancayo, Junín · Consulta Privada',
+        type: 'pink',
+        waitLabel: 'Consulta digna',
+        title: '«Por primera vez una doctora me explicó mi ecografía paso a paso»',
+        quote: '"Había salido llorando de tres consultorios anteriores. En Huancayo encontré una especialista que se tomó 40 minutos para escuchar mi historial, explicarme la diferencia entre SOP y SOMP y darme opciones reales."',
+        transcripts: [
+          '00:00 — "Llegué a consulta con miedo de que volvieran a minimizarme..."',
+          '00:10 — "La doctora me mostró la pantalla y me explicó cada imagen con paciencia..."',
+          '00:20 — "Salí sintiendo que por fin habitaba mi cuerpo con información."'
+        ],
+        author: '— Lucía, 26 años (Testimonio ficticio de ejemplo)',
+        x: 226, y: 304
+      },
+      {
+        id: 6,
+        isFictional: true,
+        region: 'Piura',
+        locationDetail: 'Piura · Atención Primaria',
+        type: 'terracotta',
+        waitLabel: '6 años para diagnóstico',
+        title: '«Me dijeron que bajara de peso antes de revisar mis hormonas»',
+        quote: '"Fui buscando ayuda por agotamiento extremo, caída de cabello y ciclos ausentes. La única recomendación fue hacer dieta sin evaluar resistencia a la insulina ni tiroides."',
+        transcripts: [
+          '00:00 — "Fui por cansancio crónico y ciclos irregulares..."',
+          '00:10 — "Me dijeron que todo se arreglaba bajando de peso sin pedir análisis..."',
+          '00:20 — "Seis años después confirmaron hipotiroidismo y SOP metabólico."'
+        ],
+        author: '— Andrea, 28 años (Testimonio ficticio de ejemplo)',
+        x: 96, y: 152
+      },
+      {
+        id: 7,
+        isFictional: true,
+        region: 'Iquitos',
+        locationDetail: 'Iquitos, Loreto · Comunidad',
+        type: 'pink',
+        waitLabel: 'Autocuidado y comunidad',
+        title: '«Dejar de usar jabones perfumados terminó con años de molestias»',
+        quote: '"Me recetaban óvulos casi todos los meses sin explicarme cómo funciona la microbiota vaginal. Aprender que la vagina se limpia sola cambió mi relación con mi cuerpo."',
+        transcripts: [
+          '00:00 — "Gastaba muchísimo dinero en jabones íntimos perfumados cada mes..."',
+          '00:10 — "Nadie me había explicado que alteraban mi flora natural..."',
+          '00:20 — "Compartir esta información con mis hermanas nos liberó de mucha culpa."'
+        ],
+        author: '— Elena, 22 años (Testimonio ficticio de ejemplo)',
+        x: 265, y: 105
+      },
+      {
+        id: 8,
+        isFictional: true,
+        region: 'Cañete',
+        locationDetail: 'Cañete, Lima Provincias · Hospital Regional',
+        type: 'terracotta',
+        waitLabel: '9 años para diagnóstico',
+        title: '«Tuve que viajar a Lima para conseguir una ecografía especializada»',
+        quote: '"En mi provincia no había equipos ni personal capacitado para hacer mapeo pélvico profundo. Ahorrar para viajar y pagar el examen particular me tomó casi nueve años."',
+        transcripts: [
+          '00:00 — "En mi ciudad todas las ecografías salían aparentemente normales..."',
+          '00:10 — "Tuve que ahorrar meses para viajar a Lima por un mapeo especializado..."',
+          '00:20 — "La salud femenina digna no debería depender de dónde vives."'
+        ],
+        author: '— Rosa, 30 años (Testimonio ficticio de ejemplo)',
+        x: 174, y: 344
+      }
+    ];
+
+    let activePinId = 1;
+    let currentFilter = 'all';
+    let currentZoom = 1;
+
+    function renderMapPins() {
+      const layer = document.getElementById('pins-layer');
+      layer.innerHTML = '';
+
+      const filtered = mapPins.filter(p => currentFilter === 'all' || p.type === currentFilter);
+
+      // Actualizar contadores
+      document.getElementById('count-all').textContent = mapPins.length;
+      document.getElementById('count-terracotta').textContent = mapPins.filter(p => p.type === 'terracotta').length;
+      document.getElementById('count-pink').textContent = mapPins.filter(p => p.type === 'pink').length;
+
+      filtered.forEach(pin => {
+        const isSelected = pin.id === activePinId;
+        const mainColor = pin.type === 'terracotta' ? '#ff5757' : '#ff66c4';
+        const strokeColor = pin.type === 'terracotta' ? '#964915' : '#572c0e';
+        const pulseClass = pin.type === 'terracotta' ? 'pulse-ring-terracotta' : 'pulse-ring-pink';
+
+        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        g.setAttribute('class', 'map-pin-group');
+        g.setAttribute('transform', `translate(${pin.x}, ${pin.y})`);
+        g.onclick = () => selectPin(pin.id);
+
+        // Anillo pulsante
+        const pulseCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        pulseCircle.setAttribute('cx', '0');
+        pulseCircle.setAttribute('cy', '0');
+        pulseCircle.setAttribute('r', isSelected ? '15' : '11');
+        pulseCircle.setAttribute('fill', mainColor);
+        pulseCircle.setAttribute('class', pulseClass);
+        g.appendChild(pulseCircle);
+
+        // Aro de selección si está activo
+        if (isSelected) {
+          const activeRing = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          activeRing.setAttribute('cx', '0');
+          activeRing.setAttribute('cy', '0');
+          activeRing.setAttribute('r', '14');
+          activeRing.setAttribute('fill', '#fffaf7');
+          activeRing.setAttribute('stroke', '#572c0e');
+          activeRing.setAttribute('stroke-width', '2.5');
+          g.appendChild(activeRing);
+        }
+
+        // Núcleo del Pin
+        const core = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        core.setAttribute('cx', '0');
+        core.setAttribute('cy', '0');
+        core.setAttribute('r', isSelected ? '9.5' : '7.5');
+        core.setAttribute('fill', mainColor);
+        core.setAttribute('stroke', strokeColor);
+        core.setAttribute('stroke-width', '2');
+        g.appendChild(core);
+
+        // Punto blanco cálido interior
+        const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        dot.setAttribute('cx', '0');
+        dot.setAttribute('cy', '0');
+        dot.setAttribute('r', '2.6');
+        dot.setAttribute('fill', '#fffaf7');
+        g.appendChild(dot);
+
+        layer.appendChild(g);
+      });
+    }
+
+    function selectPin(id) {
+      playFX('pin');
+      stopAllAmbient();
+      activePinId = id;
+      const pin = mapPins.find(p => p.id === id);
+      if (!pin) return;
+
+      const badge = document.getElementById('pin-type-badge');
+      const fictionBadge = document.getElementById('pin-fiction-badge');
+      const audioFictionNote = document.getElementById('audio-fiction-note');
+      const quoteBox = document.getElementById('pin-quote-box');
+      const playBtn = document.getElementById('pin-play-btn');
+
+      if (pin.type === 'terracotta') {
+        badge.className = 'px-3.5 py-1 rounded-full bg-[#ff5757]/15 text-[#ff5757] font-display font-extrabold text-xs uppercase tracking-wider';
+        badge.textContent = 'Pin Terracota · Lo que dolió';
+        quoteBox.style.borderLeftColor = '#ff5757';
+        playBtn.style.backgroundColor = '#ff5757';
+      } else {
+        badge.className = 'px-3.5 py-1 rounded-full bg-[#ff66c4]/20 text-[#572c0e] font-display font-extrabold text-xs uppercase tracking-wider';
+        badge.textContent = 'Pin Rosa · Lo que sanó';
+        quoteBox.style.borderLeftColor = '#ff66c4';
+        playBtn.style.backgroundColor = '#ff66c4';
+      }
+
+      if (pin.isFictional) {
+        fictionBadge.className = 'px-2.5 py-1 rounded-full bg-[#964915]/10 text-[#964915] font-display font-bold text-[10px] uppercase tracking-wider border border-[#964915]/20';
+        fictionBadge.textContent = 'Ejemplo ficticio';
+        audioFictionNote.textContent = '(Recreación ficticia)';
+      } else {
+        fictionBadge.className = 'px-2.5 py-1 rounded-full bg-[#ff66c4]/20 text-[#572c0e] font-display font-bold text-[10px] uppercase tracking-wider border border-[#ff66c4]/40';
+        fictionBadge.textContent = 'Aporte sumado en vivo';
+        audioFictionNote.textContent = '(Simulación de aporte)';
+      }
+
+      document.getElementById('pin-wait-badge').innerHTML = `<i class="fa-regular fa-clock text-[#ff5757] mr-1"></i> ${pin.waitLabel}`;
+      document.getElementById('pin-region').innerHTML = `<i class="fa-solid fa-location-dot text-[#ff5757] mr-1"></i> ${pin.locationDetail}`;
+      document.getElementById('pin-title').textContent = pin.title;
+      document.getElementById('pin-quote-box').textContent = pin.quote;
+      document.getElementById('pin-author').textContent = pin.author;
+
+      // Reset audio UI
+      pinSeconds = 0;
+      document.getElementById('audio-time-display').textContent = '00:00 / 00:30';
+      document.getElementById('pin-audio-progress').style.width = '0%';
+      document.getElementById('audio-status-text').textContent = 'Pulsa play para escuchar el testimonio';
+      document.getElementById('pin-transcript').textContent = pin.transcripts[0];
+
+      renderMapPins();
+    }
+
+    function filterPins(type) {
+      playFX('click');
+      currentFilter = type;
+
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.className = 'filter-btn px-4 py-2.5 rounded-full font-display font-bold text-xs bg-[#ffede0] text-[#572c0e] border border-[#964915]/25 hover:bg-[#ff66c4] hover:text-[#fffaf7] transition-all';
+      });
+      const activeBtn = document.getElementById(`filter-${type}`);
+      activeBtn.className = 'filter-btn px-4 py-2.5 rounded-full font-display font-bold text-xs bg-[#572c0e] text-[#ffede0] transition-all';
+
+      const visible = mapPins.filter(p => type === 'all' || p.type === type);
+      if (visible.length > 0 && !visible.some(p => p.id === activePinId)) {
+        selectPin(visible[0].id);
+      } else {
+        renderMapPins();
+      }
+    }
+
+    function cyclePin(dir) {
+      const visible = mapPins.filter(p => currentFilter === 'all' || p.type === currentFilter);
+      if (visible.length === 0) return;
+      const idx = visible.findIndex(p => p.id === activePinId);
+      const nextIdx = (idx + dir + visible.length) % visible.length;
+      selectPin(visible[nextIdx].id);
+    }
+
+    function togglePinAudio() {
+      const pin = mapPins.find(p => p.id === activePinId);
+      if (!pin) return;
+
+      if (isPinPlaying) {
+        isPinPlaying = false;
+        clearInterval(pinProgressInterval);
+        stopAmbientSoundOnly();
+        document.getElementById('pin-play-icon').className = 'fa-solid fa-play ml-0.5';
+        document.getElementById('eq-visualizer').classList.remove('eq-active');
+        document.getElementById('audio-status-text').textContent = 'Audio en pausa';
+      } else {
+        isPinPlaying = true;
+        if (pinSeconds >= 30) pinSeconds = 0;
+        startAmbientPulse(pin.type);
+        document.getElementById('pin-play-icon').className = 'fa-solid fa-pause';
+        document.getElementById('eq-visualizer').classList.add('eq-active');
+        document.getElementById('audio-status-text').textContent = 'Reproduciendo cápsula sonora...';
+
+        pinProgressInterval = setInterval(() => {
+          pinSeconds++;
+          const pct = Math.min((pinSeconds / 30) * 100, 100);
+          document.getElementById('pin-audio-progress').style.width = `${pct}%`;
+          const secFormatted = pinSeconds < 10 ? `0${pinSeconds}` : pinSeconds;
+          document.getElementById('audio-time-display').textContent = `00:${secFormatted} / 00:30`;
+
+          // Actualizar transcripción sincronizada cada 10s
+          if (pinSeconds < 10) {
+            document.getElementById('pin-transcript').textContent = pin.transcripts[0];
+          } else if (pinSeconds < 20) {
+            document.getElementById('pin-transcript').textContent = pin.transcripts[1] || pin.transcripts[0];
+          } else {
+            document.getElementById('pin-transcript').textContent = pin.transcripts[2] || pin.transcripts[0];
+          }
+
+          if (pinSeconds >= 30) {
+            isPinPlaying = false;
+            clearInterval(pinProgressInterval);
+            stopAmbientSoundOnly();
+            document.getElementById('pin-play-icon').className = 'fa-solid fa-rotate-right';
+            document.getElementById('eq-visualizer').classList.remove('eq-active');
+            document.getElementById('audio-status-text').textContent = 'Testimonio finalizado';
+          }
+        }, 450); // Ritmo fluido ideal para demostraciones en vivo
+      }
+    }
+
+    function zoomMap(factor) {
+      playFX('click');
+      currentZoom = Math.min(Math.max(currentZoom * factor, 0.85), 2.1);
+      const group = document.getElementById('map-zoom-group');
+      const offsetX = (250 * (1 - currentZoom));
+      const offsetY = (310 * (1 - currentZoom));
+      group.setAttribute('transform', `translate(${offsetX.toFixed(1)}, ${offsetY.toFixed(1)}) scale(${currentZoom.toFixed(2)})`);
+    }
+
+    function resetMapZoom() {
+      playFX('click');
+      currentZoom = 1;
+      document.getElementById('map-zoom-group').setAttribute('transform', 'translate(0,0) scale(1)');
+    }
+
+    // Modal Sumar Pin
+    function openAddPinModal() {
+      playFX('click');
+      const modal = document.getElementById('add-pin-modal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeAddPinModal() {
+      playFX('click');
+      const modal = document.getElementById('add-pin-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function submitNewPin(e) {
+      e.preventDefault();
+      const region = document.getElementById('new-pin-region').value;
+      const type = document.getElementById('new-pin-type').value;
+      const authorRaw = document.getElementById('new-pin-author').value.trim();
+      const waitLabel = document.getElementById('new-pin-years').value.trim();
+      const titleRaw = document.getElementById('new-pin-title').value.trim();
+      const storyRaw = document.getElementById('new-pin-story').value.trim();
+
+      const baseCoord = regionCoords[region] || { x: 162, y: 312 };
+      // Pequeño desplazamiento orgánico para que no tape otro pin de la misma región
+      const jitterX = (Math.random() - 0.5) * 18;
+      const jitterY = (Math.random() - 0.5) * 18;
+
+      const newId = mapPins.length + 1;
+      const newPin = {
+        id: newId,
+        isFictional: false,
+        region: region,
+        locationDetail: `${region} · Testimonio sumado en vivo`,
+        type: type,
+        waitLabel: waitLabel,
+        title: titleRaw.startsWith('«') ? titleRaw : `«${titleRaw}»`,
+        quote: `"${storyRaw}"`,
+        transcripts: [
+          `00:00 — "${storyRaw.slice(0, 95)}..."`,
+          `00:12 — "Compartido en el archivo vivo de Habitar(se) desde ${region}."`,
+          `00:22 — "Cada voz suma para romper el silencio médico."`
+        ],
+        author: authorRaw ? `— ${authorRaw}` : '— Testimonio Anónimo (Sumado en vivo)',
+        x: Math.round(baseCoord.x + jitterX),
+        y: Math.round(baseCoord.y + jitterY)
+      };
+
+      mapPins.push(newPin);
+      currentFilter = 'all';
+      closeAddPinModal();
+      document.getElementById('new-pin-form').reset();
+      selectPin(newId);
+      playFX('chime');
+    }
+
+    /* =========================================================================
+       4. EXPERIENCIA 2: EN SUS ZAPATOS (10 AÑOS PARA UN DIAGNÓSTICO)
+    ========================================================================= */
+    const shoesStages = [
+      {
+        step: 1,
+        age: '19 años · Primer semestre universitario',
+        title: 'Etapa 1: El primer colapso y la guardia médica',
+        context: 'Te despiertas a las 4:00 a.m. con un dolor pélvico punzante que te provoca náuseas y mareos. Apenas logras caminar hasta la posta o emergencia más cercana.',
+        choices: [
+          {
+            label: 'Aceptar el calmante inyectable y volver a casa como indica el médico de turno ("es solo un cólico fuerte").',
+            addMonths: 22,
+            addCost: 140,
+            addWear: 20,
+            noteTitle: 'Nota Periodística · Normalización primaria',
+            noteText: 'El 68% de pacientes reporta que en su primera consulta de urgencia recibieron analgésicos sin derivación a ginecología ni registro del patrón cíclico del dolor.'
+          },
+          {
+            label: 'Insistir en que te realicen una ecografía pélvica básica antes de salir de alta.',
+            addMonths: 14,
+            addCost: 320,
+            addWear: 12,
+            noteTitle: 'Nota Clínica · Limitación de la ecografía convencional',
+            noteText: 'La ecografía pélvica estándar suele salir "normal" porque no detecta implantes superficiales ni endometriosis profunda sin protocolo de mapeo.'
+          }
+        ]
+      },
+      {
+        step: 2,
+        age: '21 años · Universidad y prácticas preprofesionales',
+        title: 'Etapa 2: Fatiga crónica vs. exigencia académica',
+        context: 'Llevas dos años faltando dos días al mes a clases y entregando trabajos con fiebre baja y agotamiento extremo. Te dicen que "tienes que aprender a manejar el estrés".',
+        choices: [
+          {
+            label: 'Automedicarte con antiinflamatorios cada 6 horas para poder rendir en exámenes y prácticas.',
+            addMonths: 28,
+            addCost: 680,
+            addWear: 25,
+            noteTitle: 'Nota Médica · El costo oculto de resistir',
+            noteText: 'El uso crónico de AINEs sin diagnóstico causa gastritis secundaria y enmascara el avance inflamatorio de patologías ginecológicas.'
+          },
+          {
+            label: 'Llevar un diario detallado de síntomas (dolor, sangrado y digestión) durante 3 ciclos y pedir cita en consultorio externo.',
+            addMonths: 18,
+            addCost: 450,
+            addWear: 15,
+            noteTitle: 'Herramienta Habitar(se) · Registro de Autonomía',
+            noteText: 'Documentar la frecuencia e intensidad del dolor (escala 1-10) reduce el sesgo de minimizar los síntomas frente al especialista.'
+          }
+        ]
+      },
+      {
+        step: 3,
+        age: '24 años · Primer trabajo formal',
+        title: 'Etapa 3: La receta rápida vs. pedir mapeo pélvico',
+        context: 'En consulta ginecológica, tras escucharte menos de 8 minutos, te ofrecen iniciar anticonceptivos orales de inmediato "para apagar el ovario y que deje de doler".',
+        choices: [
+          {
+            label: 'Tomar la receta sin pedir más exámenes porque necesitas dejar de sentir dolor urgentemente.',
+            addMonths: 32,
+            addCost: 1450,
+            addWear: 22,
+            noteTitle: 'Nota Periodística · Parche hormonal sin diagnóstico',
+            noteText: 'Los anticonceptivos pueden reducir el sangrado temporalmente, pero sin un diagnóstico claro retrasan años la detección de endometriosis o SOP.'
+          },
+          {
+            label: 'Preguntar por el diagnóstico diferencial y solicitar una ecografía transvaginal con protocolo de mapeo pélvico profundo.',
+            addMonths: 16,
+            addCost: 980,
+            addWear: 14,
+            noteTitle: 'Evidencia Clínica · Mapeo Pélvico Especializado',
+            noteText: 'El mapeo pélvico con preparación intestinal permite visualizar focos de endometriosis profunda sin necesidad de cirugía exploratoria inicial.'
+          }
+        ]
+      },
+      {
+        step: 4,
+        age: '26 años · Búsqueda de segunda opinión',
+        title: 'Etapa 4: El costo económico y emocional de ser escuchada',
+        context: 'Las listas de espera en el sistema público superan los 5 meses para subespecialistas. Debes decidir cómo cerrar tu ruta diagnóstica.',
+        choices: [
+          {
+            label: 'Esperar la cita programada en el sistema público mientras sigues lidiando con crisis mensuales.',
+            addMonths: 18,
+            addCost: 520,
+            addWear: 18,
+            noteTitle: 'Brecha Territorial y de Acceso',
+            noteText: 'Menos del 15% de establecimientos públicos cuenta con unidades especializadas en dolor pélvico crónico y endometriosis.'
+          },
+          {
+            label: 'Destinar tus ahorros a una consulta privada con especialista en endometriosis y llevar todos tus estudios previos.',
+            addMonths: 6,
+            addCost: 1350,
+            addWear: 10,
+            noteTitle: 'Desigualdad Económica en Salud',
+            noteText: 'Obtener un diagnóstico oportuno en el Perú suele convertirse en un privilegio económico asumido directamente por el bolsillo de las pacientes.'
+          }
+        ]
+      }
+    ];
+
+    let shoesState = {
+      stageIndex: 0,
+      totalMonths: 2,
+      totalCost: 180,
+      totalWear: 20,
+      lastFeedback: null
+    };
+
+    function formatMonthsToYears(months) {
+      const yrs = Math.floor(months / 12);
+      const rem = months % 12;
+      if (yrs === 0) return `${rem} meses`;
+      if (rem === 0) return `${yrs} años`;
+      return `${yrs} años y ${rem} meses`;
+    }
+
+    function updateShoesStatsUI() {
+      document.getElementById('shoes-stat-time').textContent = formatMonthsToYears(shoesState.totalMonths);
+      document.getElementById('shoes-stat-cost').textContent = `S/ ${shoesState.totalCost.toLocaleString('es-PE')}`;
+      const wearClamped = Math.min(shoesState.totalWear, 100);
+      document.getElementById('shoes-stat-wear-label').textContent = `${wearClamped}%`;
+      document.getElementById('shoes-stat-wear-bar').style.width = `${wearClamped}%`;
+    }
+
+    function renderShoesStage() {
+      updateShoesStatsUI();
+      const container = document.getElementById('shoes-stage-container');
+
+      // Pantalla final tras las 4 decisiones
+      if (shoesState.stageIndex >= shoesStages.length) {
+        const finalTimeStr = formatMonthsToYears(shoesState.totalMonths);
+        container.innerHTML = `
+          <div class="text-center max-w-2xl mx-auto space-y-6 py-4 animate-[fadeSlideUp_0.35s_ease]">
+            <span class="inline-block px-4 py-1.5 rounded-full bg-[#ff5757]/15 text-[#ff5757] font-display font-extrabold text-xs uppercase tracking-widest">
+              Diagnóstico Confirmado · Fin del Recorrido
+            </span>
+
+            <h2 class="font-display font-black text-3xl sm:text-4xl text-[#572c0e] leading-tight">
+              Tu recorrido tomó <span class="text-[#ff5757]">${finalTimeStr}</span>.
+            </h2>
+
+            <p class="text-base sm:text-lg text-[#964915] font-medium leading-relaxed">
+              Así es la realidad de <strong>1 de cada 10 mujeres en el mundo</strong> que viven con endometriosis y enfrentan el Síndrome de Yentl en consulta médica.
+            </p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-left bg-[#ffede0] p-5 rounded-2xl border border-[#964915]/20">
+              <div>
+                <span class="block text-[11px] font-display font-bold uppercase text-[#964915]">Tiempo perdido</span>
+                <strong class="font-display font-black text-lg text-[#572c0e]">${finalTimeStr}</strong>
+              </div>
+              <div>
+                <span class="block text-[11px] font-display font-bold uppercase text-[#964915]">Gasto de bolsillo</span>
+                <strong class="font-display font-black text-lg text-[#572c0e]">S/ ${shoesState.totalCost.toLocaleString('es-PE')}</strong>
+              </div>
+              <div>
+                <span class="block text-[11px] font-display font-bold uppercase text-[#964915]">Desgaste acumulado</span>
+                <strong class="font-display font-black text-lg text-[#ff5757]">${Math.min(shoesState.totalWear, 100)}%</strong>
+              </div>
+            </div>
+
+            ${shoesState.lastFeedback ? `
+              <div class="p-4 rounded-2xl bg-[#ffede0]/70 border-l-4 border-[#ff66c4] text-left text-xs sm:text-sm text-[#572c0e]">
+                <strong class="block font-display font-bold text-[#964915] mb-1">${shoesState.lastFeedback.title}</strong>
+                ${shoesState.lastFeedback.text}
+              </div>
+            ` : ''}
+
+            <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+              <button onclick="resetShoesGame()" class="px-7 py-3.5 rounded-full bg-[#ff66c4] hover:bg-[#ff5757] text-[#fffaf7] font-display font-extrabold text-sm transition-all warm-shadow">
+                <i class="fa-solid fa-rotate-right mr-2"></i> Volver a jugar con otras decisiones
+              </button>
+              <button onclick="switchExperience('mapa')" class="px-6 py-3.5 rounded-full bg-[#ffede0] text-[#572c0e] border border-[#964915]/25 font-display font-bold text-sm hover:border-[#ff66c4] transition-all">
+                Explorar historias reales en el mapa <i class="fa-solid fa-arrow-right ml-1.5"></i>
+              </button>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      const stage = shoesStages[shoesState.stageIndex];
+      container.innerHTML = `
+        <div class="space-y-6 animate-[fadeSlideUp_0.3s_ease]">
+          <!-- Progreso de etapas -->
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <span class="px-3.5 py-1 rounded-full bg-[#ff66c4]/20 text-[#572c0e] font-display font-extrabold text-xs">
+              Paso ${stage.step} de ${shoesStages.length} · ${stage.age}
+            </span>
+            <div class="flex items-center gap-1.5">
+              ${shoesStages.map((_, i) => `
+                <span class="h-2 w-8 rounded-full ${i <= shoesState.stageIndex ? 'bg-[#ff66c4]' : 'bg-[#ffede0]'}"></span>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Situación narrativa -->
+          <div class="space-y-2.5">
+            <h2 class="font-display font-black text-2xl sm:text-3xl text-[#572c0e]">${stage.title}</h2>
+            <p class="text-sm sm:text-base text-[#572c0e]/90 leading-relaxed max-w-3xl">${stage.context}</p>
+          </div>
+
+          <!-- Nota periodística de la decisión anterior si existe -->
+          ${shoesState.lastFeedback ? `
+            <div class="p-4 rounded-2xl bg-[#ffede0] border-l-4 border-[#964915] text-xs sm:text-sm text-[#572c0e]">
+              <span class="font-display font-extrabold text-[#964915] block mb-0.5">
+                <i class="fa-solid fa-newspaper mr-1.5"></i>${shoesState.lastFeedback.title}
+              </span>
+              ${shoesState.lastFeedback.text}
+            </div>
+          ` : ''}
+
+          <!-- Opciones de decisión -->
+          <div class="grid md:grid-cols-2 gap-4 pt-2">
+            ${stage.choices.map((choice, idx) => `
+              <button onclick="chooseShoesOption(${idx})" class="text-left p-5 sm:p-6 rounded-2xl bg-[#ffede0]/75 hover:bg-[#ffede0] border-2 border-[#964915]/20 hover:border-[#ff66c4] transition-all flex flex-col justify-between gap-4 group warm-shadow">
+                <div>
+                  <span class="inline-block px-2.5 py-0.5 rounded-full bg-[#fffaf7] text-[#964915] font-display font-extrabold text-[11px] uppercase mb-2.5 group-hover:bg-[#ff66c4] group-hover:text-[#fffaf7] transition-colors">
+                    Opción ${idx === 0 ? 'A' : 'B'}
+                  </span>
+                  <p class="font-display font-bold text-sm sm:text-base text-[#572c0e] leading-snug">
+                    ${choice.label}
+                  </p>
+                </div>
+                <span class="text-xs font-display font-extrabold text-[#ff5757] group-hover:translate-x-1 transition-transform inline-flex items-center">
+                  Elegir este camino <i class="fa-solid fa-arrow-right ml-1.5"></i>
+                </span>
+              </button>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    function chooseShoesOption(choiceIdx) {
+      playFX('decision');
+      const stage = shoesStages[shoesState.stageIndex];
+      const chosen = stage.choices[choiceIdx];
+
+      shoesState.totalMonths += chosen.addMonths;
+      shoesState.totalCost += chosen.addCost;
+      shoesState.totalWear += chosen.addWear;
+      shoesState.lastFeedback = {
+        title: chosen.noteTitle,
+        text: chosen.noteText
+      };
+      shoesState.stageIndex++;
+
+      if (shoesState.stageIndex >= shoesStages.length) {
+        playFX('chime');
+      }
+      renderShoesStage();
+    }
+
+    function resetShoesGame() {
+      playFX('click');
+      shoesState = {
+        stageIndex: 0,
+        totalMonths: 2,
+        totalCost: 180,
+        totalWear: 20,
+        lastFeedback: null
+      };
+      renderShoesStage();
+    }
+
+    /* =========================================================================
+       5. EXPERIENCIA 3: HABITAR(SE) EN VIVO (CABINA DE ESCUCHA & MURAL)
+    ========================================================================= */
+    const cabinVoices = [
+      {
+        tag: 'Archivo Universitario #01 · Lima (Ejemplo ficticio)',
+        quote: '"Pensé que era la única que faltaba a clases por los vómitos del primer día de regla. Escuchar a otras chicas aquí me quitó un peso enorme de encima."'
+      },
+      {
+        tag: 'Archivo Universitario #02 · Arequipa (Ejemplo ficticio)',
+        quote: '"Me dijeron durante cuatro años que mi dolor era por ansiedad. Entrar a esta cabina y escuchar historias idénticas a la mía me dio valor para pedir una segunda opinión."'
+      },
+      {
+        tag: 'Archivo Universitario #03 · Cusco (Ejemplo ficticio)',
+        quote: '"Nadie nos enseña cómo distinguir un flujo normal de una infección, ni que la vagina se limpia sola. Gracias por hacer este espacio tan cálido y libre de vergüenza."'
+      }
+    ];
+
+    let isCabinActive = false;
+    let cabinVoiceIdx = 0;
+
+    function toggleCabinExperience() {
+      isCabinActive = !isCabinActive;
+      if (isCabinActive) {
+        startAmbientPulse('pink');
+      } else {
+        stopAmbientSoundOnly();
+      }
+      updateCabinUI();
+    }
+
+    function updateCabinUI() {
+      const btn = document.getElementById('cabin-listen-btn');
+      const btnText = document.getElementById('cabin-btn-text');
+      const btnIcon = document.getElementById('cabin-btn-icon');
+      const indicator = document.getElementById('cabin-live-indicator');
+      const glow = document.getElementById('cabin-lamp-glow');
+      const box = document.getElementById('cabin-voice-box');
+
+      if (isCabinActive) {
+        btn.className = 'px-6 py-3.5 rounded-full bg-[#ff5757] text-[#fffaf7] font-display font-extrabold text-sm transition-all warm-shadow flex items-center gap-2.5';
+        btnIcon.className = 'fa-solid fa-volume-high animate-pulse';
+        btnText.textContent = 'Quitarse los audífonos';
+        indicator.innerHTML = '<span class="inline-block w-2 h-2 rounded-full bg-[#ff5757] animate-ping mr-1"></span> Escuchando en cabina';
+        indicator.className = 'text-[#ff5757] font-extrabold';
+        glow.setAttribute('opacity', '0.35');
+        box.style.borderColor = '#ff66c4';
+      } else {
+        btn.className = 'px-6 py-3.5 rounded-full bg-[#ff66c4] hover:bg-[#ff5757] text-[#fffaf7] font-display font-extrabold text-sm transition-all warm-shadow flex items-center gap-2.5';
+        btnIcon.className = 'fa-solid fa-headphones';
+        btnText.textContent = 'Ponerse los audífonos';
+        indicator.textContent = 'En espera';
+        indicator.className = 'text-[#964915]';
+        glow.setAttribute('opacity', '0.12');
+        box.style.borderColor = 'rgba(150, 73, 21, 0.3)';
+      }
+    }
+
+    function nextCabinVoice() {
+      playFX('click');
+      cabinVoiceIdx = (cabinVoiceIdx + 1) % cabinVoices.length;
+      document.getElementById('cabin-voice-tag').textContent = cabinVoices[cabinVoiceIdx].tag;
+      document.getElementById('cabin-voice-quote').textContent = cabinVoices[cabinVoiceIdx].quote;
+    }
+
+    // Mural Colectivo
+    let muralNotes = [
+      {
+        heard: '«Es solo estrés de la universidad, tómate una manzanilla.»',
+        reply: '«Mi ciclo es mi quinto signo vital. El dolor que me paraliza merece estudios reales.»',
+        tilt: '-1deg',
+        accent: '#ff66c4',
+        isFictional: true
+      },
+      {
+        heard: '«Cuando tengas hijos se te va a quitar el dolor menstrual.»',
+        reply: '«Mi cuerpo no necesita un embarazo para ser atendido con respeto hoy mismo.»',
+        tilt: '1.2deg',
+        accent: '#ff5757',
+        isFictional: true
+      },
+      {
+        heard: '«Usa este jabón íntimo con olor a flores todos los días.»',
+        reply: '«Mi vagina es autorregulable y se limpia sola. Para mi vulva, solo agua y respeto.»',
+        tilt: '-0.8deg',
+        accent: '#964915',
+        isFictional: true
+      }
+    ];
+
+    function renderMuralNotes() {
+      const grid = document.getElementById('mural-grid');
+      grid.innerHTML = muralNotes.map(note => `
+        <article class="sticky-note p-5 rounded-2xl bg-[#ffede0] border-2 warm-shadow flex flex-col justify-between gap-4"
+                 style="transform: rotate(${note.tilt}); border-color: ${note.accent};">
+          <div class="space-y-1.5">
+            <div class="flex items-center justify-between gap-2">
+              <span class="inline-block text-[10px] font-display font-extrabold uppercase tracking-wider text-[#964915]">
+                <i class="fa-solid fa-comment-slash text-[#ff5757] mr-1"></i> Lo que me dijeron en consulta:
+              </span>
+              <span class="px-2 py-0.5 rounded-full text-[9px] font-display font-bold uppercase tracking-wider ${note.isFictional ? 'bg-[#964915]/10 text-[#964915]' : 'bg-[#ff66c4]/20 text-[#572c0e]'}">
+                ${note.isFictional ? 'Ejemplo ficticio' : 'Nota en vivo'}
+              </span>
+            </div>
+            <p class="text-xs sm:text-sm text-[#964915] line-through italic">${note.heard}</p>
+          </div>
+          <div class="pt-3 border-t border-[#964915]/20 space-y-1.5">
+            <span class="inline-block text-[10px] font-display font-extrabold uppercase tracking-wider text-[#572c0e]">
+              <i class="fa-solid fa-heart text-[#ff66c4] mr-1"></i> Lo que hoy me digo a mí misma:
+            </span>
+            <p class="font-display font-bold text-sm text-[#572c0e] leading-snug">${note.reply}</p>
+          </div>
+        </article>
+      `).join('');
+    }
+
+    function addMuralNote(e) {
+      e.preventDefault();
+      const heardInput = document.getElementById('mural-heard');
+      const replyInput = document.getElementById('mural-reply');
+
+      const accents = ['#ff66c4', '#ff5757', '#964915'];
+      const tilts = ['-1.2deg', '1deg', '-0.6deg', '1.4deg'];
+
+      muralNotes.unshift({
+        heard: `«${heardInput.value.trim().replace(/^«|»$/g, '')}»`,
+        reply: `«${replyInput.value.trim().replace(/^«|»$/g, '')}»`,
+        tilt: tilts[muralNotes.length % tilts.length],
+        accent: accents[muralNotes.length % accents.length],
+        isFictional: false
+      });
+
+      heardInput.value = '';
+      replyInput.value = '';
+      playFX('chime');
+      renderMuralNotes();
+    }
+
+    // Inicialización al cargar la página
+    window.onload = function () {
+      renderMapPins();
+      renderShoesStage();
+      renderMuralNotes();
+    };
+  </script>
+</body>
+</html>
